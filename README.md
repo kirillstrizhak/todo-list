@@ -4,6 +4,19 @@ This is a simple to do list app that I created for my portfolio. It comes with s
 
 # All tasks tab
 Creating, editing and deleting tasks directly. These interactions with the task can be carried out not only by directly pressing the buttons on it, but also through the pop-up window of the selected task.
+
+### Creating, editing and deleting tasks. 
+1. __Creating task__
++ To create a task, you need to use the "Add new task" button. After clicking it, a task layout will appear in the list of tasks with input fields for its name and description. At the bottom of the layout there will be 2 buttons: "Cancel" and "Add task". 
++ You cannot add another task until you are done with the current one. 
++ Also, you cannot create a task with an empty name.
+2. __Editing task__
++ To edit the title and description of the task, click on the "pencil" button. After that, a small editor with input fields will open, where you can make changes.
++ To save the changes, click the "Save" button
+3. __Deleting Task__
++ To delete a task, click on the "recycle bin" button. The task will be deleted.
+
+### Task popup
 The task popup offers some advanced functionality for interacting with the task, so it has several sections inside it:
 + Date the task was created (it is for informational purposes only)
 + Deadline for the task (it is purely informative, but the function of editing it using an interactive calendar will be added)
