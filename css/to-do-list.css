@@ -1,0 +1,650 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  font-family: "Cairo", sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 20px;
+  background: rgb(255, 168, 82);
+  color: #fff;
+}
+header .navTabsBar {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+}
+header .navTabsBar .tabButton {
+  text-align: center;
+  padding: 5px 10px;
+}
+header .navTabsBar .tabButtonActive {
+  box-shadow: inset 0px 0px 6px #b1b1b1;
+  background: rgb(236, 236, 236);
+  color: rgb(255, 168, 82);
+}
+header .toolbar {
+  display: flex;
+  align-items: center;
+}
+header .toolbar a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 5px;
+}
+header .toolbar a:hover {
+  text-decoration: underline;
+}
+header .toolbar .language {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+header .toolbar .language img {
+  width: 25px;
+  height: 25px;
+}
+header .toolbar .language:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+::-webkit-scrollbar {
+  position: absolute;
+  background: transparent;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 5px;
+  transition: 0.1s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background: #c7c7c7;
+}
+
+.disabled {
+  display: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.enabled {
+  display: block;
+}
+
+.addingTask {
+  border: 1px solid #747474;
+}
+
+.inactiveText {
+  color: #747474;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.button {
+  padding: 0 10px;
+  background: rgb(255, 168, 82);
+  border: none;
+  transition: 0.2s;
+  color: #fff;
+}
+
+.button:hover {
+  cursor: pointer;
+  box-shadow: inset 0px 0px 6px #b1b1b1;
+  background: rgb(236, 236, 236);
+  color: rgb(255, 168, 82);
+}
+
+.inactiveButton {
+  display: flex;
+  height: 20px;
+  padding: 5px;
+  margin: 0 2px;
+  border-radius: 5px;
+  position: relative;
+  color: #919191;
+  align-items: center;
+  box-shadow: inset 0px 0px 6px #b1b1b1;
+  background: rgb(217, 217, 217);
+}
+
+.inactiveButton:hover {
+  cursor: not-allowed;
+}
+
+.taskBtn {
+  display: flex;
+  height: 20px;
+  padding: 5px;
+  border-radius: 5px;
+  position: relative;
+  background: rgb(255, 168, 82);
+  align-items: center;
+  transition: 0.1s;
+}
+
+input {
+  font-family: "Cairo", sans-serif;
+  border: none;
+  border-radius: 5px;
+  box-shadow: inset 0px 0px 6px #ababab;
+  outline: none;
+}
+
+textarea {
+  font-family: "Cairo", sans-serif;
+  resize: none;
+}
+
+@keyframes spawningFade {
+  from {
+    opacity: 0;
+    background: rgb(255, 168, 82);
+  }
+  to {
+    opacity: 1;
+    background: #fff;
+  }
+}
+@keyframes swipe {
+  from {
+    opacity: 0;
+    transform: translateX(200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toDoList {
+  padding: 0 10px;
+}
+.toDoList__header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+.toDoList__header .searchForm .searchTask {
+  display: flex;
+  justify-content: center;
+}
+.toDoList__header .searchForm .searchTask .taskInput {
+  width: 650px;
+  height: 40px;
+  font-size: 30px;
+  padding: 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.toDoList__header .searchForm .searchTask .searchTaskButton {
+  font-size: 25px;
+}
+.toDoList__header .searchForm .searchTask .cancelSearchButton {
+  border-radius: 0;
+  font-size: 35px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.toDoList__body .adderAndFilters {
+  margin-bottom: 10px;
+}
+.toDoList__body .adderAndFilters .tasksActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation-name: swipe;
+  animation-duration: 0.5s;
+  animation-fill-mode: backwards;
+}
+.toDoList__body .adderAndFilters .tasksActions .addTaskForm {
+  display: flex;
+}
+.toDoList__body .adderAndFilters .tasksActions .addTaskForm .addTaskButton {
+  border-radius: 5px;
+}
+.toDoList__body .adderAndFilters .tasksActions .taskFilters {
+  padding: 0 10px;
+}
+.toDoList__body .adderAndFilters .tasksActions .taskFilters .filter {
+  color: rgb(255, 168, 82);
+  padding: 0 10px;
+  transition: 0.2s;
+}
+.toDoList__body .adderAndFilters .tasksActions .taskFilters .filter:hover {
+  cursor: pointer;
+  color: #dedede;
+}
+.toDoList__body .mainContentContainer {
+  padding: 10px 0;
+}
+.toDoList__body .mainContentContainer .taskList {
+  animation-name: swipe;
+  animation-duration: 0.5s;
+  animation-fill-mode: backwards;
+}
+.toDoList__body .mainContentContainer .taskList .noTasks {
+  margin-top: 15%;
+}
+.toDoList__body .mainContentContainer .taskList .noTasks .noTasksInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.toDoList__body .mainContentContainer .taskList .noTasks .noTasksInfo img {
+  width: 235px;
+}
+.toDoList__body .mainContentContainer .taskList .noTasks .noTasksInfo span {
+  margin-top: 15px;
+  width: 390px;
+  text-align: center;
+  font-size: 25px;
+  color: #747474;
+}
+.toDoList__body .mainContentContainer .task .taskSave {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+.toDoList__body .mainContentContainer .task__header {
+  position: relative;
+}
+.toDoList__body .mainContentContainer .task__header .taskTitle {
+  align-items: center;
+}
+.toDoList__body .mainContentContainer .task__header .taskTitleEditor {
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 220px;
+  color: #747474;
+  overflow: hidden;
+  outline: none;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 0 5px;
+  resize: none;
+  border: none;
+}
+.toDoList__body .mainContentContainer .task__header .titleCounter {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 12px;
+}
+.toDoList__body .mainContentContainer .task__header .taskTitleText {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 0 5px;
+  font-size: 22px;
+}
+.toDoList__body .mainContentContainer .task__header .taskTitleText:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.toDoList__body .mainContentContainer .task__header__toolBar {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  display: flex;
+}
+.toDoList__body .mainContentContainer .task__header__toolBar div {
+  margin: 0 2.5px;
+}
+.toDoList__body .mainContentContainer .task__body {
+  position: relative;
+  max-height: 165px;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .task__body .taskDescrEditor {
+  width: 98.9%;
+  min-height: 60px;
+  max-height: 150px;
+  color: #747474;
+  font-size: 16px;
+  overflow-y: scroll;
+  outline: none;
+  padding: 0 5px;
+  resize: none;
+  border: none;
+}
+.toDoList__body .mainContentContainer .task__body .descrCounter {
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+  font-size: 12px;
+}
+.toDoList__body .mainContentContainer .task__body .taskDescrText {
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  padding: 0 5px;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .task__footer {
+  position: relative;
+}
+.toDoList__body .mainContentContainer .task__footer .taskConfirmAdding {
+  position: absolute;
+  right: 0px;
+  padding: 5px 20px;
+  bottom: -45px;
+}
+.toDoList__body .mainContentContainer .task__footer .taskCancelAdding {
+  position: absolute;
+  padding: 5px 20px;
+  right: 110px;
+  bottom: -45px;
+}
+.toDoList__body .mainContentContainer .taskListView {
+  position: relative;
+  padding: 5px;
+  max-height: 350px;
+  margin-top: 15px;
+  background: #fff;
+  border: 1px solid #cdcdcd;
+  border-radius: 10px;
+}
+.toDoList__body .mainContentContainer .taskBoardView {
+  position: relative;
+  padding: 15px;
+  margin: 15px 15px;
+  width: 200px;
+  min-height: 150px;
+  max-height: 350px;
+  margin-top: 15px;
+  background: #fff;
+  border: 1px solid #cdcdcd;
+  border-radius: 10px;
+  animation-name: spawningFade;
+  animation-duration: 0.8s;
+  animation-fill-mode: forwards;
+}
+.toDoList__body .mainContentContainer .taskGroups {
+  display: flex;
+  animation: swipe 0.5s backwards;
+  border-bottom: 1px solid #dedede;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsTitle {
+  color: #ababab;
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 25px;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder {
+  width: 40%;
+  padding-right: 15px;
+  border-right: 1px solid #dedede;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder .groups {
+  min-height: 800px;
+  max-height: 800px;
+  overflow-y: scroll;
+  padding-right: 15px;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder .addNewGroup {
+  display: flex;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dedede;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder .addNewGroup .groupNameInput {
+  height: 15px;
+  font-size: 20px;
+  padding: 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder .addNewGroup .addNewGroupButton {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupsAndAdder .addNewGroup .addNewGroupButton span {
+  font-size: 30px;
+  font-weight: bolder;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup {
+  width: 60%;
+  min-height: 500px;
+  margin-left: 15px;
+  max-height: 800px;
+  min-height: 800px;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .noGroupTasks {
+  text-align: center;
+  animation: swipe 0.4s forwards;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .noGroupTasks img {
+  width: 175px;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .noGroupTasks p {
+  text-align: center;
+  font-size: 21px;
+  color: #747474;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .noGroupTasks p span {
+  text-decoration: underline;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #dedede;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu {
+  position: absolute;
+  top: 110px;
+  right: 245px;
+  background: #fff;
+  z-index: 2;
+  min-width: 200px;
+  min-height: 50px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  box-shadow: 4px 5px 3px #dadada;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuHeader {
+  background: #dedede;
+  display: flex;
+  flex-direction: row-reverse;
+  height: 20px;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody {
+  padding: 10px 0 10px 10px;
+  border-top: none;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody .groupAddingTask {
+  width: 300px;
+  padding: 5px;
+  border-bottom: 1px solid #dedede;
+  transition: 0.2s;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody .groupAddingTask .groupAddingTaskTitle {
+  font-size: 20px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody .groupAddingTask .groupAddingTaskDescr {
+  font-size: 14px;
+  color: #747474;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody .groupAddingTask:hover {
+  background: #f4f4f4;
+  cursor: pointer;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .addingTasksMenu .tasksMenuBody .existTaskInGroup {
+  width: 300px;
+  padding: 5px;
+  border-bottom: 1px solid #d6d6d6;
+  transition: 0.2s;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .searchTaskInGroup {
+  display: flex;
+  align-items: center;
+  padding: 15px 10px;
+  height: 5px;
+  border-radius: 5px;
+  box-shadow: inset 0px 0px 6px #ababab;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .searchTaskInGroup input {
+  height: 15px;
+  font-size: 20px;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .searchTaskInGroup span {
+  color: rgb(255, 168, 82);
+  font-size: 20px;
+}
+.toDoList__body .mainContentContainer .taskGroups .tasksInGroup .groupTasksActions .groupTasksButtons .addTaskToGroupBtn {
+  border-radius: 5px;
+  font-size: 25px;
+  padding: 1px 4px;
+  transition: 0.1s;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupTasksList {
+  min-height: 500px;
+  max-height: 830px;
+  padding: 0 15px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  animation: swipe 0.4s forwards;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupTasksInfo p {
+  font-size: 21px;
+}
+.toDoList__body .mainContentContainer .taskGroups .groupTasksInfo p span {
+  text-decoration: underline;
+  font-weight: 600;
+  margin-left: 6px;
+}
+.toDoList__body .mainContentContainer .centeredContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.toDoList__body .mainContentContainer .centeredContent p {
+  font-size: 25px;
+}
+.toDoList__body .mainContentContainer .tasksGroup {
+  position: relative;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  transition: 0.2s;
+  background: #fff;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo__header {
+  position: relative;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo .groupBtn {
+  display: flex;
+  height: 20px;
+  padding: 5px;
+  border-radius: 5px;
+  position: relative;
+  background: rgb(255, 168, 82);
+  align-items: center;
+  transition: 0.1s;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo .groupBtn:hover {
+  background: rgb(236, 236, 236);
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo__toolbar {
+  display: flex;
+  position: absolute;
+  right: 0;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo__toolbar div {
+  margin: 0 2.5px;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo__body .groupNameEditor {
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 220px;
+  color: #747474;
+  overflow: hidden;
+  outline: none;
+  font-size: 16px;
+  resize: none;
+  border: none;
+  transition: 0.2s;
+}
+.toDoList__body .mainContentContainer .tasksGroup .groupInfo .groupSaveBtn {
+  display: flex;
+  position: absolute;
+  bottom: -35px;
+  right: 0;
+}
+.toDoList__body .mainContentContainer .tasksGroup p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.toDoList__body .mainContentContainer .tasksGroup:hover .groupNameEditor {
+  background: #f4f4f4;
+}
+.toDoList__body .mainContentContainer .tasksGroup:hover {
+  cursor: pointer;
+  background: #f4f4f4;
+}
+.toDoList__body .mainContentContainer .currentGroup {
+  box-shadow: inset 5px 0px 2px rgb(255, 168, 82);
+}/*# sourceMappingURL=to-do-list.css.map */

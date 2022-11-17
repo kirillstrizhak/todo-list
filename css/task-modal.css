@@ -1,0 +1,592 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.popupBody {
+    width: 100%;
+    height: 100%;
+    --feature-color: rgb(255, 168, 82);
+}
+
+.popupBackground {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: #000;
+    opacity: 0.3;
+    z-index: 1000;
+    animation-name: toVisible;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+}
+
+.taskModal {
+    width: 950px;
+    height: 95%;
+    padding-bottom: 15px;
+}
+
+.popupSizePos {
+    position: absolute;
+    background: #fff;
+    z-index: 1001;
+    border-radius: 10px;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    animation-name: displayModal;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.popupHeader {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background: var(--feature-color);
+}
+
+.popupToolBar {
+    display: flex;
+    align-items: center;
+    width: 80px;
+    height: 10px;
+    padding: 10px;
+    justify-content: space-around;
+}
+
+.modal-edit {
+    font-size: 15px;
+    color: #fff;
+    transition: 0.1s;
+}
+
+.modal-edit:hover {
+    cursor: pointer;
+    color: #cdcdcd;
+}
+
+.modal-btn {
+    font-size: 20px;
+    background: none;
+    color: #fff;
+    border: none;
+    transition: 0.1s;
+}
+
+.modal-delete {
+    font-size: 15px;
+    color: #fff;
+    transition: 0.1s;
+}
+
+.modal-delete:hover:hover {
+    cursor: pointer;
+    color: #cdcdcd;
+}
+
+.popupTaskMenu {
+    position: absolute;
+    top: 27px;
+    right: 90px;
+    background: #fff;
+    padding: 10px;
+    box-shadow: #10101069 6px 6px 5px;
+}
+
+.popupTaskMenu ul li {
+    list-style-type: none;
+}
+
+.modal-btn:hover {
+    cursor: pointer;
+    color: #cdcdcd;
+}
+
+.popupSaveBar {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.savePopup-btn {
+    margin: 10px 0;
+    font-size: 18px;
+    padding: 5px 25px;
+}
+
+.addSubTask {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    border-radius: 5px;
+    padding: 0 5px;
+}
+
+.popupMain {
+    display: flex;
+    position: relative;
+    margin-top: 10px;
+    max-height: 92%;
+}
+
+.deleteAlert {
+    position: absolute;
+    top: 300px;
+    left: 200px;
+    border-radius: 10px;
+    background: #f6f6f6;
+    box-shadow: #65646475 6px 6px 8px;
+    animation-name: displayModal;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+.alertHeader {
+    padding: 0 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background: var(--feature-color);
+}
+
+.alertHeader h3 {
+    font-weight: 500;
+    color: #fff;
+}
+
+.alertMain {
+    margin:  10px 0;
+}
+
+.alertContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 25px;
+    padding: 15px 25px;
+}
+
+.alertButtons {
+    display: flex;
+    width: 250px;
+    justify-content: space-around;
+}
+
+.alert-btn {
+    border-radius: 5px;
+}
+
+.popupText {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.popupTaskInf {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.popupTaskInf:hover {
+    cursor: text;
+}
+
+.popupTaskTitle {
+    font-size: 25px;
+    min-height: 61px;
+    font-weight: bold;
+}
+
+.popupTitleCounter {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.popupTaskTitle span, .popupTaskDescr span {
+    padding: 0 5px;
+}
+
+.popupTaskDescr {
+    font-size: 16px;
+    min-height: 94px;
+    color: #747474;
+}
+ 
+.popupEditor {
+    overflow-y: scroll;
+    width: 675px;
+    padding-left: 25px;
+    max-height: inherit;
+}
+
+.popupTitleEditor {
+    width: 97%;
+    height: 40px;
+    color: #747474;
+    overflow: hidden;
+    outline: none;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 0 5px;
+    resize: none;
+    border: none;
+}
+
+.popupDescrEditor {
+    width: 97%;
+    min-height: 85px;
+    color: #747474;
+    font-size: 16px;
+    overflow-x: hidden;
+    outline: none;
+    padding: 0 5px;
+    resize: none;
+    border: none;
+}
+
+.taskComments {
+    border-top: 1px solid var(--feature-color);
+    margin-top: 15px;
+    padding: 15px 0 10px 0;
+}
+
+.taskComment {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    padding: 5px;
+    border-radius: 15px;
+}
+
+.taskCommentAvatar {
+    width: 40px;
+    height: 40px;
+}
+.taskCommentAvatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+}
+
+.commentTextArea {
+    width: 370px;
+    outline: none;
+    font-size: 15px;
+    border-radius: 30px;
+    border: 1px solid #acacac;
+    padding: 5px 15px;
+    height: 18px;
+    min-height: 29px;
+    resize: vertical;
+}
+
+.popupTaskSettings {
+    font-weight: 500;
+    width: 270px;
+    margin: 0 15px;
+}
+
+.taskSetting {
+    position: relative;
+    border-bottom: 1px solid #cdcdcd;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 5px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.taskSetting span {
+    font-weight: bold;
+    color: #acacac;
+}
+
+.settingInnerContent {
+    padding: 0 8px;
+    transition: 0.2s;
+    border-radius: 5px;
+}
+
+.settingInnerContent:hover {
+    cursor: pointer;
+    background: #f4f4f4;
+}
+
+.taskGroupSelect {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.groupsMenuDropdown {
+    position: absolute;
+    background: #f4f4f4;
+    top: 71px;
+    left: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 1;
+    border-radius: 5px;
+    box-shadow: 5px 5px 6px #b1b1b1;
+    width: 250px;
+    max-height: 180px;
+}
+
+.groupsMenuList {
+    background: #f4f4f4;
+    border: 1px solid #dedede;
+    max-height: 128px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    overflow-y: scroll;
+}
+
+.taskTagsSelect {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.taskTagSelect:hover .addOrChangeSettingBtn {
+    color:  #dedede;
+}
+
+.assignedTags {
+    display: flex;
+    padding: 5px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.taskTag {
+    box-sizing: border-box;
+    border-radius: 15px;
+    margin: 5px;
+    padding: 2px 10px;
+    font-size: 14px;
+}
+
+.taskTag span {
+    color: #fff;
+}
+
+.assignedTags::-webkit-scrollbar {
+    height: 5px;
+}
+
+.tagList{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    /* margin-top: 10px; */
+    /* border: 1px solid #dedede; */
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+.tagsMenuDropdown {
+    position: absolute;
+    left: -8px;
+    top: 42px;
+    width: 100%;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 5px;
+    box-shadow: 5px 5px 6px #b1b1b1;
+}
+
+.searchTag {
+    box-sizing: border-box;
+    padding: 0 10px;
+    font-size: 16px;
+    width: 100%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.createTagMenuOpener {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.createTagBtn {
+    text-align: center;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.createTagMenu {
+    position: absolute;
+    top: 0;
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 10px;
+    left: 275px;
+    background: #f4f4f4;
+}
+
+.createTagNameBar {
+    display: flex;
+}
+
+.createTagName {
+    padding: 0 5px;
+    font-size: 16px;
+} 
+
+.chooseColorToolBar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chooseColorToolBar:hover span {
+    cursor: pointer;
+    color: var(--feature-color);
+}
+
+.chooseColorCaret {
+    transition: 0.2s;
+}
+
+.colorChooserDropdown {
+    padding: 5px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    min-height: 0px;
+    display: none;
+}
+
+.colorChooserDropdown div {
+    display: flex;
+    align-items: center;
+}
+
+.colorChooserDropdown div:hover {
+    background: #dedede;
+}
+
+.colorChooserDropdown span {
+    color: #000;
+    font-weight: 100;
+    margin-left: 5px;
+}
+
+.colorPrev {
+    width: 20px;
+    height: 20px;
+}
+
+.tagsToolBar {
+    display: flex;
+}
+
+.menuGroup {
+    padding: 0 15px;
+    transition: 0.2s;
+}
+
+.menuGroup:hover {
+    background:  #dedede;
+}
+
+.taskGroupSelect:hover .addOrChangeSettingBtn {
+    color:  #dedede;
+}
+
+.popupAddGroup {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.searchPopupGroup {
+    box-sizing: border-box;
+    padding: 0 10px;
+    font-size: 16px;
+    width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.closeGroupsMenu {
+    height: 0;
+    color: orange;
+    z-index: 2;
+    position: absolute;
+    bottom: 48px;
+    right: 12px;
+}
+
+.calendarDate {
+    display: flex;
+}
+
+.addOrChangeSettingBtn {
+    color: var(--feature-color);
+    background: transparent;
+    border: none;
+    margin: 0 5px;
+    transition: 0.2s;
+}
+
+.addOrChangeSettingBtn:hover {
+    cursor: pointer;
+}
+
+.groupSelectBtn {
+    font-size: 20px;
+}
+
+.tagSelectBtn {
+    font-size: 20px;
+}
+
+.popupMain::-webkit-scrollbar {
+    width: 5px;
+}
+
+.popupMain::-webkit-scrollbar-track {
+    background: none;
+}
+
+.popupMain::-webkit-scrollbar-thumb {
+    background: #cdcdcd;
+    border-radius: 10px;
+}
+
+.popupMain::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: #a0a0a0;
+}
+
+@keyframes displayModal {
+    from {
+        top: -300px;
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+        top: 50%;
+    }
+}
+
+@keyframes toVisible {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.3;
+    }
+}
