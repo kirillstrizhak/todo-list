@@ -8,6 +8,7 @@ The task popup offers some advanced functionality for interacting with the task,
 + Date the task was created (it is for informational purposes only)
 + Deadline for the task (it is purely informative, but the function of editing it using an interactive calendar will be added)
 + Task group. The task group can be changed using the drop-down menu in this section. If you have not created any groups or have cleared their list, then the drop-down menu will notify you of this.
++ Search for a task in the dropdown menu. If you have created too many groups, you can use the search among them in the drop-down menu. You just need to enter the name of the group or several letters contained in the name of the desired task.
 + Subtasks (In development)
 
 # Groups tab
