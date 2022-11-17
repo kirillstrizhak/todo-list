@@ -13,4 +13,3 @@ The task popup offers some advanced functionality for interacting with the task,
 
 2) Creation of groups, editing and deletion of groups in which you can group tasks. You can add an unlimited number of tasks to groups, but one task can only be in one group (it will be fixed in future versions). Tasks can be added both in the group itself and through the task pop-up menu in a special section.
 Search for tasks in a group. Each open group has a field for entering the name of the task you want to search for. You need to enter the name or several letters contained in the name of the desired task and the group will display matches with the entered name.
-3) 
