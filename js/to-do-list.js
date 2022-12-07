@@ -38,9 +38,11 @@ class TaskAdder {
         if (noTasks) {
             noTasks.remove()
         }
-
         let taskDate = this.createToday();
-        let addedTask = { title: ``, description: '', createDate: taskDate, completeDate: taskDate, group: 'No group', lastGroupNumber: 'none', tags: [{ name: 'No tags' }], id: 1 };
+        let taskCompleteDate = this.createToday();
+        let addedTask = { title: ``, description: '', createDate: taskDate, completeDate: taskCompleteDate, group: 'No group', lastGroupNumber: 'none', tags: [{ name: 'No tags' }], id: 1 };
+
+        this.dateFormatHandler(addedTask)
 
         taskList.tasks.push(addedTask);
         taskList.renderTask(addedTask);
@@ -65,8 +67,26 @@ class TaskAdder {
         taskList.showOrHideToolBar(addedTask)
     }
 
+    dateFormatHandler(task) {
+        if (task.createDate.day < 10) {
+            task.createDate.day = '0' + task.createDate.day;
+        }
+
+        if (task.createDate.month < 10) {
+            task.createDate.month = '0' + task.createDate.month;
+        }
+
+        if (task.completeDate.day < 10) {
+            task.completeDate.day = '0' + task.completeDate.day;
+        }
+
+        if (task.completeDate.month < 10) {
+            task.completeDate.month = '0' + task.completeDate.month;
+        }
+    }
+
     attachTaskPopup(task) {
-        const popupNotification = new Popup(task.title, task.description, task, new PopupGroups(task));
+        const popupNotification = new Popup(task.title, task.description, task, new PopupGroups(task), new Calendar(task));
         let popupOpener = document.querySelector(`.js-titleText${task.id}`);
         if (popupOpener) {
             popupOpener.addEventListener('click', () => popupNotification.show('taskModal', `${task.id}`));
@@ -385,11 +405,7 @@ class Group {
 
 class TaskGroups {
     constructor() {
-        this.groups = [
-            // {
-            //     name: 'My own tasks', number: 0, tasks: []
-            // }
-        ];
+        this.groups = [];
     }
 
     renderGroupsList() {
@@ -452,6 +468,11 @@ class TaskGroups {
                     </div>
                     <div class="addingTasksMenu disabled">
                         <div class="tasksMenuBody"></div>
+                        <div class="tasksMenuFooter">
+                        <div>
+                            <button class="button addChoosedTasks disabled">Add choosed tasks</button>
+                        </div>
+                        </div>
                     </div>
         `
         let menuOpenerButton = document.querySelector('.addTaskToGroupBtn');
@@ -460,13 +481,16 @@ class TaskGroups {
                 isTaskMenuOpened = true;
                 menuOpenerButton.firstChild.style.transform = 'rotate(135deg)';
                 menuOpenerButton.firstChild.style.transition = '0.2s';
-                this.openChoosingTaskMenu(group);
+                choosingTaskMenu.openChoosingTaskMenu(group);
             } else {
                 menuOpenerButton.firstChild.style.transform = null;
-                this.closeChoosingTaskMenu(group);
+                choosingTaskMenu.closeChoosingTaskMenu(group);
                 isTaskMenuOpened = false;
             }
         })
+
+        let addChoosedTasksBtn = document.querySelector('.addChoosedTasks');
+        addChoosedTasksBtn.addEventListener('click', () => choosingTaskMenu.addChoosedTasksToGroup(group));
 
         let groupTasksContainer = document.querySelector('.groupTasksContainer');
         groupTasksContainer.innerHTML = `<div class="groupTasksList js-tasksOfGroup${group.number}"></div>`;
@@ -613,40 +637,6 @@ class TaskGroups {
         }
     }
 
-    renderAddingTask(task) {
-        let taskTemplate = `
-       <div class="groupAddingTask groupAddingTask${task.id}">
-            <p class="groupAddingTaskTitle">${task.title}</p>
-            <p class="groupAddingTaskDescr">${task.description}</p>
-       </div>
-       `
-        return taskTemplate;
-    }
-
-    openChoosingTaskMenu(group) {
-        let addingTasksMenu = document.querySelector('.addingTasksMenu');
-        addingTasksMenu.classList.remove('disabled')
-        let addingTasksList = document.querySelector('.tasksMenuBody');
-        if (taskList.tasks.length > 0) {
-            let emptyAddingTasksList = '';
-            taskList.tasks.forEach(task => {
-                emptyAddingTasksList += this.renderAddingTask(task);
-                return emptyAddingTasksList;
-            })
-            addingTasksList.innerHTML = emptyAddingTasksList;
-            taskList.tasks.forEach(task => {
-                document.querySelector(`.groupAddingTask${task.id}`).addEventListener('click', () => modalGroups.addTaskToGroup(task, group));
-            })
-        } else {
-            addingTasksList.innerHTML = `<p>Task list is empty, you need create task, to add it to group</p>`
-        }
-    }
-
-    closeChoosingTaskMenu() {
-        let addingTasksMenu = document.querySelector('.addingTasksMenu');
-        addingTasksMenu.classList.add('disabled')
-    }
-
     renderTaskWhenAdded(task, group) {
         let groupTasksContainer = document.querySelector('.groupTasksContainer');
         if (groupTasksContainer) {
@@ -685,26 +675,6 @@ class TaskGroups {
         }
     }
 
-    // searchTaskInGroup() {
-    //     let searchTaskInput = document.querySelector('.searchTaskInGroup input');
-    //     let searchedTasks = document.querySelectorAll('.task');
-    //     let val = searchTaskInput.value.trim();
-
-    //     if (val != '') {
-    //         searchedTasks.forEach(element => {
-    //             if (element.querySelector('.taskTitleText').innerText.search(val) == -1) {
-    //                 element.classList.add('disabled');
-    //             } else {
-    //                 element.classList.remove('disabled');
-    //             }
-    //         })
-    //     } else {
-    //         searchedTasks.forEach(element => {
-    //             element.classList.remove('disabled');
-    //         })
-    //     }
-    // }
-
     searchTaskInGroupLive() {
         let searchTaskInput = document.querySelector('.searchTaskInGroup input');
         searchTaskInput.addEventListener('input', () => {
@@ -742,6 +712,149 @@ class TaskGroups {
     }
 }
 
+class ChoosingTaskMenu {
+    constructor() {
+        this.choosedTasks = [];
+    }
+
+    renderAddingTask(task) {
+        let taskTemplate;
+        if (task.lastGroupNumber != 'none') {
+            taskTemplate = `
+       <div class="groupAddingTask">
+            <div class="groupAddingTask__info js-groupAddingTask${task.id}">
+                <p class="groupAddingTaskTitle">${task.title}</p>
+                <p class="groupAddingTaskDescr">${task.description}</p>
+            </div>
+            <div class="groupAddingTask__settings">
+                <div class="isInGroup js-taskGroupName${task.id}">
+                    <p class="groupedAlert">Grouped <span><i class="fa-sharp fa-solid fa-circle-info"></i></span></p>
+                </div>
+                <label class="addTaskCheckbox_container">
+                    <input type="checkbox" class="addTaskCheckbox js-taskCheckbox${task.id}">
+                    <div class="addTaskCheckbox__itSelf"></div>
+                </label>
+            </div>
+       </div>
+       `
+        } else {
+            taskTemplate = `
+       <div class="groupAddingTask">
+            <div class="groupAddingTask__info js-groupAddingTask${task.id}">
+                    <p class="groupAddingTaskTitle">${task.title}</p>
+                    <p class="groupAddingTaskDescr">${task.description}</p>
+            </div>
+            <div class="groupAddingTask__settings" style="justify-content: center; align-items: center;">
+                <label class="addTaskCheckbox_container">
+                    <input type="checkbox" class="addTaskCheckbox js-taskCheckbox${task.id}">
+                    <div class="addTaskCheckbox__itSelf"></div>
+                </label>
+            </div>
+       </div>
+       `
+        }
+        return taskTemplate;
+    }
+
+    openChoosingTaskMenu(group) {
+        this.choosedTasks = [];
+        let addingTasksMenu = document.querySelector('.addingTasksMenu');
+        addingTasksMenu.classList.remove('disabled')
+        let addingTasksList = document.querySelector('.tasksMenuBody');
+        if (taskList.tasks.length > 0) {
+            let emptyAddingTasksList = '';
+            taskList.tasks.forEach(task => {
+                emptyAddingTasksList += this.renderAddingTask(task);
+                return emptyAddingTasksList;
+            })
+            addingTasksList.innerHTML = emptyAddingTasksList;
+            taskList.tasks.forEach(task => {
+                document.querySelector(`.js-groupAddingTask${task.id}`).addEventListener('click', () => modalGroups.addTaskToGroup(task, group));
+
+                let taskCheckbox = document.querySelector(`.js-taskCheckbox${task.id}`);
+                taskCheckbox.addEventListener('click', () => this.init(task));
+
+                let groupName = document.querySelector(`.js-taskGroupName${task.id} span`);
+                if (groupName) {
+                    groupName.addEventListener('mouseenter', (e) => {
+                        if (e.target == groupName) {
+                            this.showTaskGroupName(task);
+                        }
+                    })
+                }
+            })
+
+        } else {
+            addingTasksList.innerHTML = `<p>Task list is empty, you need create task, to add it to group</p>`
+        }
+        console.log(this.choosedTasks)
+    }
+
+    activateOrDeactivateCheckbox(task) {
+        let groupCheckbox = document.querySelector(`.js-taskCheckbox${task.id}`);
+        if (!groupCheckbox.checked) {
+            groupCheckbox.checked = true;
+        } else {
+            groupCheckbox.checked = false;
+        }
+    }
+
+    activateAddChoosedTasksButton() {
+        let addChoosedTasksBtn = document.querySelector(`.addChoosedTasks`);
+        if (this.choosedTasks.length > 0) {
+            addChoosedTasksBtn.classList.remove('disabled');
+        } else {
+            addChoosedTasksBtn.classList.add('disabled');
+        }
+    }
+
+    chooseAddingTask(task) {
+        const existTask = this.choosedTasks.find(choosedTask => choosedTask.id == task.id);
+        if (!existTask) {
+            this.choosedTasks.push(task);
+        } else {
+            this.choosedTasks.splice(this.choosedTasks.indexOf(task), 1);
+        }
+        console.log(this.choosedTasks)
+    }
+
+    addChoosedTasksToGroup(group) {
+        this.choosedTasks.forEach(task => {
+            modalGroups.addTaskToGroup(task, group)
+        })
+        this.choosedTasks = [];
+        taskGroups.renderTasksInGroup(group)
+        console.log(group.tasks)
+    }
+
+    showTaskGroupName(task) {
+        let isInGroupInfo = document.querySelector(`.js-ingInfo${task.id}`);
+        //isInGroupInfo.classList.remove('disabled');
+    }
+
+    hideTaskGroupName(task) {
+        let isInGroupInfo = document.querySelector(`.js-ingInfo${task.id}`);
+        //isInGroupInfo.classList.add('disabled');
+        //Тут нужно будет сделать небольшой алерт, предупреждающий о том, что задачу уже находится в другой группе
+    }
+
+    closeChoosingTaskMenu() {
+        this.choosedTasks = [];
+        let addingTasksMenu = document.querySelector('.addingTasksMenu');
+        addingTasksMenu.classList.add('disabled')
+        let addChoosedTasksBtn = document.querySelector('.addChoosedTasks');
+        if (!addChoosedTasksBtn.classList.contains('disabled')) {
+            addChoosedTasksBtn.classList.add('disabled')
+        }
+    }
+
+    init(task) {
+        //this.activateOrDeactivateCheckbox(task);
+        this.chooseAddingTask(task)
+        this.activateAddChoosedTasksButton()
+    }
+}
+
 class NavBar {
     constructor() { }
 
@@ -764,10 +877,10 @@ const newTask = new Task;
 const taskList = new TaskList;
 const newGroupTemplate = new Group;
 const taskGroups = new TaskGroups;
+const choosingTaskMenu = new ChoosingTaskMenu;
 const navBar = new NavBar;
 
 taskAdd.init()
-
 taskList.init()
 taskGroups.init()
 navBar.switchActiveTab()

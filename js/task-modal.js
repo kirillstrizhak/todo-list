@@ -1,9 +1,10 @@
 class Popup {
-    constructor(popupHeading, popupText, popupedTask, popupGroups) {
+    constructor(popupHeading, popupText, popupedTask, popupGroups, calendar) {
         this.popupHeading = popupHeading;
         this.popupText = popupText;
         this.popupedTask = popupedTask;
         this.popupGroups = popupGroups;
+        this.calendar = calendar;
     };
 
     show(popupType, popupId) {
@@ -74,9 +75,27 @@ class Popup {
                             <div class="taskSetting completeDate">
                                 <span>Complete date</span>
                                 <div class="calendarDate settingInnerContent">
-                                <p>${task.completeDate.day}/${task.completeDate.month}/${task.completeDate.year}</p>
-                                <button class="addOrChangeSettingBtn"><i class="fa-solid fa-calendar-days"></i></button></div>
+                                <p class="completeDateField">${task.completeDate.day}/${task.completeDate.month}/${task.completeDate.year}</p>
+                                <button class="addOrChangeSettingBtn js-calendarOpener"><i class="fa-solid fa-calendar-days"></i></button></div>
                             </div>
+                            <div class="calendar disabled">
+                                    <div class="calendarContainer">
+                                        <div class="calendarHeader"><div class="closeCalendarBtn"><i class="fa-solid fa-xmark"></i></div></div>
+                                        <div class="calendarToolbar">
+                                            <div class="calendarSlider js-year">
+                                                <button class="button calendarSliderBtn js-prevYear"><i class="fa-solid fa-chevron-left"></i></button>
+                                                <div class="yearField"></div>
+                                                <button class="button calendarSliderBtn js-nextYear"><i class="fa-solid fa-chevron-right"></i></button>
+                                            </div>
+                                            <div class="calendarSlider js-month">
+                                                <button class="button calendarSliderBtn js-prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                                                <div class="monthField"></div>
+                                                <button class="button calendarSliderBtn js-nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                                            </div>
+                                        </div>
+                                        <div id="calendarBody" class="calendarBody"></div>
+                                    </div>
+                                </div>
                             <div class="taskSetting group">
                                 <span>Group</span>
                                 <div class="taskGroupSelect openGroupDropdown settingInnerContent">
@@ -105,9 +124,13 @@ class Popup {
                 this.editPopupTask(this.popupedTask)
             }
         });
+
+        let taskCompleteDate = this.popupedTask.completeDate;
+        document.querySelector('.calendarDate').addEventListener('click', () => this.calendar.init(document.querySelector('#calendarBody'), taskCompleteDate.year, taskCompleteDate.month))
+        document.querySelector('.completeDate').addEventListener('click', () => this.calendar.show());
         this.hideOnClick(this.popupedTask);
         this.popupGroups.init();
-        //this.popupTaskTags.init()
+
     };
 
     editPopupTask(task) {
@@ -345,159 +368,195 @@ class PopupGroups {
 
 }
 
-// class PopupTaskTags {
-//     constructor() {
-//         this.colors = [
-//             'Blue',
-//             'Red',
-//             'Green',
-//             'Greenyellow',
-//             'Pink',
-//             'Violet'
-//         ]
-//     }
+class Calendar {
+    constructor(popupedTask) {
+        this.popupedTask = popupedTask;
+    }
 
-//     renderTag(tag) {
-//         let tagTemplate = `
-//         <div class="taskTag" style="background: ${tag.color};">
-//             <span>${tag.name}</span>
-//         </div>
-//         `
-//         return tagTemplate;
-//     }
+    show() {
+        let parent = document.querySelector('.calendar');
+        parent.classList.remove('disabled')
+    }
 
-//     renderTagMenuTemplate() {
-//         let menuBlock = document.querySelector('.tagsEditMenu');
-//         menuBlock.innerHTML = `
-//         <div class="tagsMenuDropdown">
-//             <div class="tagsToolBar">
-//                 <input class="searchTag" type="text" placeholder="Search for tag...">
-//                 <button class="button createTagMenuOpener">Create tag</button>
-//                 <div class="createTagMenu disabled" style="display: none;">
-//                     <input type="text" class="createTagName" placeholder="Enter new tag name...">
-//                     <div class="chooseColor">
-//                         <div class="chooseColorToolBar">
-//                             <span class="chooseColorBtn">Choose color</span>
-//                             <span class="chooseColorCaret"><i class="fa-solid fa-caret-down"></i></span>
-//                         </div>
-//                         <div class="colorChooserDropdown"></div>
-//                     </div>
-//                     <div class="button createTagBtn">Create new tag</div>
-//                 </div>
-//             </div>
-//             <div class="tagList"></div>
-//         </div>`
-//         this.renderColorList()
+    hide() {
+        let parent = document.querySelector('.calendar');
+        parent.classList.add('disabled');
+    }
 
-//         let addTagButton = document.querySelector('.createTagBtn');
-//         let newTag = { name: 'New tag', color: 'rgb(255, 168, 82)' };
-//         addTagButton.addEventListener('click', () => this.addTagToTagList(newTag));
+    renderTemplate() {
+        return `
+        <div class="calendarContainer">
+            <div class="calendarToolbar">
+                <div class="calendarSlider js-year">
+                    <button class="prev js-prevYear">Prev</button>
+                    <div class="yearField"></div>
+                    <button class="next js-nextYear">Next</button>
+                </div>
+                <div class="calendarSlider js-month">
+                    <button class="prev js-prevMonth">Prev</button>
+                    <div class="monthField"></div>
+                    <button class="next js-nextMonth">Next</button>
+                </div>
+            </div>
+            <div id="calendarBody"></div>
+        </div>
+        `
+    }
 
-//         document.querySelector('.createTagMenuOpener').addEventListener('click', () => this.showTagCreateMenu(newTag))
+    createCalendar(elem, year, month) {
+        let mon = month - 1;
+        let date = new Date(year, mon);
+        let monthField = document.querySelector('.monthField');
+        let yearField = document.querySelector('.yearField');
+        yearField.innerHTML = year;
 
-//     }
+        switch (month) {
+            case 1:
+                monthField.innerHTML = 'Январь';
+                break;
+            case 2:
+                monthField.innerHTML = 'Февраль';
+                break;
+            case 3:
+                monthField.innerHTML = 'Март';
+                break;
+            case 4:
+                monthField.innerHTML = 'Апрель';
+                break;
+            case 5:
+                monthField.innerHTML = 'Май';
+                break;
+            case 6:
+                monthField.innerHTML = 'Июнь';
+                break;
+            case 7:
+                monthField.innerHTML = 'Июль';
+                break;
+            case 8:
+                monthField.innerHTML = 'Август';
+                break;
+            case 9:
+                monthField.innerHTML = 'Сентябрь';
+                break;
+            case 10:
+                monthField.innerHTML = 'Октябрь';
+                break;
+            case 11:
+                monthField.innerHTML = 'Ноябрь';
+                break;
+            case 12:
+                monthField.innerHTML = 'Декабрь';
+                break;
+            default:
+                alert('Нет такого месяца')
+                break;
+        }
 
-//     renderTagMenu() {
-//         this.renderTagMenuTemplate();
-//         let tagMenuDropdown = document.querySelector('.tagList');
-//         let emptyTagMenu = '';
-//         modalTask.tags.forEach(tag => {
-//             emptyTagMenu += this.renderTag(tag);
-//             return emptyTagMenu
-//         });
-//         tagMenuDropdown.innerHTML = emptyTagMenu;
-//         this.collapseColorList()
-//     }
+        let table = `<table><tr><th>пн</th><th>вт</th><th>ср</th><th>чт</th><th>пт</th><th>сб</th><th>вс</th></tr><tr>`;
+        for (let i = 0; i < this.getDay(date); i++) {
+            table += '<td></td>';
+        }
+        while (date.getMonth() == mon) {
+            table += `<td class="dateCell js-day${date.getDate() - 1}">${date.getDate()}</td>`;
 
-//     collapseColorList() {
-//         let collapsible = document.querySelector('.colorChooserDropdown');
-//         let button = document.querySelector('.chooseColorToolBar');
-//         let caret = document.querySelector('.chooseColorCaret');
-//         button.addEventListener('click', () => {
-//             if (collapsible.style.maxHeight && collapsible.style.display == 'block' && caret.style.transform) {
-//                 caret.style.transform = null;
-//                 collapsible.style.maxHeight = null;
-//                 collapsible.style.display = 'none';
-//             } else {
-//                 caret.style.transform = 'rotate(180deg)'
-//                 collapsible.style.maxHeight = 200 + 'px';
-//                 collapsible.style.display = 'block';
-//             }
-//         })
-//     }
+            if (this.getDay(date) % 7 == 6) {
+                table += '</tr><tr>';
+            }
 
-//     showTagCreateMenu(newTag) {
-//         let createTagMenu = document.querySelector('.createTagMenu')
+            date.setDate(date.getDate() + 1);
+        }
+        if (this.getDay(date) != 0) {
+            for (let i = this.getDay(date); i < 7; i++) {
+                table += '<td></td>';
+            }
+        }
+        table += '</tr></table>';
+        elem.innerHTML = table;
 
-//         this.selectColor(newTag);
-//         if (createTagMenu.classList.contains('disabled')) {
-//             createTagMenu.classList.remove('disabled');
-//             createTagMenu.style.display = 'block';
-//             modalTask.tags.push(newTag);
-//         } else {
-//             createTagMenu.classList.add('disabled');
-//             createTagMenu.style.display = 'none';
-//             modalTask.tags.pop(newTag);
-//         }
-//     }
+        let dates = document.querySelectorAll('.dateCell');
+        dates.forEach(date => {
+            if (date.innerText == date.getDay) {
+                date.classList.add('activeCell')
+            }
+        })
 
-//     addTagToTagList(intermediateTag) {
-//         let addedTag = { name: this.createTagName(), color: intermediateTag.color };
-//         modalTask.tags.push(addedTag);
-//         modalTask.tags.splice(modalTask.tags.indexOf(intermediateTag), 1);
+        this.currentCompleteDateCell(this.popupedTask, year, month);
 
-//         let createTagMenu = document.querySelector('.createTagMenu');
-//         let tagList = document.querySelector('.tagList');
+        let dayCells = document.querySelectorAll('.dateCell');
+        for (let i = 0; i < dayCells.length; i++) {
+            document.querySelector(`.js-day${i}`).addEventListener('click', () => this.chooseCompleteDate(this.popupedTask, i + 1, month, year))
+        }
 
-//         createTagMenu.classList.add('disabled');
-//         createTagMenu.style.display = 'none';
+        document.querySelector('.closeCalendarBtn').addEventListener('click', () => this.hide())
+    }
 
-//         tagList.insertAdjacentHTML('beforeend', this.renderTag(addedTag));
-//         console.log(modalTask.tags)
-//     }
+    currentCompleteDateCell(task, year, month) {
+        let taskCompleteDate = task.completeDate;
+        let day = document.querySelector(`.js-day${taskCompleteDate.day - 1}`);
 
-//     createTagName() {
-//         let tagNameInput = document.querySelector('.createTagName');
-//         let tagName = tagNameInput.value;
-//         return tagName;
-//     }
+        if (taskCompleteDate.year == year && taskCompleteDate.month == month) {
+            day.classList.add('activeCell');
+        }
+    }
 
-//     renderColor(color) {
-//         let colorTemplate = `
-//             <div class="prev${color}">
-//                 <div class="colorPrev" style="background: ${color};"></div>
-//                 <span>${color}</span>
-//             </div>
-//         `
-//         return colorTemplate;
-//     }
+    getDay(date) {
+        let day = date.getDay();
+        if (day == 0) day = 7;
+        return day - 1;
+    }
 
-//     renderColorList() {
-//         let parent = document.querySelector('.colorChooserDropdown');
-//         let emptyList = '';
-//         this.colors.forEach(color => {
-//             emptyList += this.renderColor(color);
-//             return emptyList;
-//         })
-//         parent.innerHTML = emptyList;
-//     }
+    attachCalendarListeners(elem, year, month) {
+        let prevMonthButton = document.querySelector('.js-prevMonth');
+        let nextMonthButton = document.querySelector('.js-nextMonth');
+        let prevYearButton = document.querySelector('.js-prevYear');
+        let nextYearButton = document.querySelector('.js-nextYear');
 
-//     selectColor(tag) {
-//         this.colors.forEach(col => {
-//             let colorBtn = document.querySelector(`.prev${col}`);
-//             colorBtn.addEventListener('click', () => {
-//                 tag.color = col
-//             })
-//         })
+        prevMonthButton.addEventListener('click', () => {
+            if (month > 1) {
+                this.createCalendar(elem, year, --month);
+            } else {
+                month = 12;
+                this.createCalendar(elem, --year, month);
+            }
+        });
+        nextMonthButton.addEventListener('click', () => {
+            if (month < 12) {
+                this.createCalendar(elem, year, ++month);
+            } else {
+                month = 1;
+                this.createCalendar(elem, ++year, month);
+            }
+        });
+        prevYearButton.addEventListener('click', () => this.createCalendar(elem, --year, month));
+        nextYearButton.addEventListener('click', () => this.createCalendar(elem, ++year, month));
+    }
 
-//     }
+    chooseCompleteDate(task, completeDay, completeMonth, completeYear) {
+        let taskCompleteDate = task.completeDate;
 
-//     init() {
-//         document.querySelector('.assignedTags').addEventListener('click', () => this.renderTagMenu())
-//     }
-// }
-//const tags = new PopupTaskTags;
+        taskCompleteDate.day = completeDay;
+        taskCompleteDate.month = completeMonth;
+        taskCompleteDate.year = completeYear;
 
+        let popupDateField = document.querySelector('.completeDateField');
+        let activeCell = document.querySelector('.activeCell');
+        let choosedCell = document.querySelector(`.js-day${completeDay - 1}`);
+
+        if (activeCell) {
+            activeCell.classList.remove('activeCell');
+        }
+        choosedCell.classList.add('activeCell');
+
+        taskAdd.dateFormatHandler(task)
+        popupDateField.innerHTML = `${task.completeDate.day}/${task.completeDate.month}/${task.completeDate.year}`
+    }
+
+    init(elem, year, month) {
+        this.createCalendar(elem, year, month);
+        this.attachCalendarListeners(elem, year, month);
+    }
+}
 
 const modalTask = new Popup;
 const modalGroups = new PopupGroups;
+const modalCalendar = new Calendar;
