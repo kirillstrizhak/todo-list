@@ -571,6 +571,93 @@
     background: #a0a0a0;
 }
 
+.calendar {
+    position: absolute;
+    z-index: 1100;
+    background: #fff;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+    top: 150px;
+    right: 10px;
+    box-shadow: 4px 5px 3px #ababab;
+}
+
+.calendar table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar td,
+th {
+    border: 1px solid black;
+    padding: 3px;
+    text-align: center;
+}
+
+.calendar td {
+    border: 1px solid #000;
+}
+
+.dateCell:hover {
+    cursor: pointer;
+    background: #E6E6E6;
+}
+
+.activeCell {
+    background: var(--feature-color);
+    color: #fff;
+}
+
+.activeCell:hover {
+    cursor: default;
+    background: var(--feature-color);
+}
+
+.calendar th {
+    font-weight: bold;
+    background-color: #E6E6E6;
+}
+
+.calendarHeader {
+    display: flex;
+    height: 30px;
+    background: var(--feature-color);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: #fff;
+    flex-direction: row-reverse;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.calendarBody {
+    width: 240px;
+}
+
+.calendarSlider {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.closeCalendarBtn {
+    font-size: 25px;
+    transition: 0.1s;
+}
+
+.closeCalendarBtn:hover {
+    cursor: pointer;
+    color: #dedede;
+}
+
+.yearField {
+    font-size: 20px;
+}
+
+.monthField {
+    font-size: 17px;
+}
+
 @keyframes displayModal {
     from {
         top: -300px;

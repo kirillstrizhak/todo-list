@@ -362,11 +362,11 @@ textarea {
                         overflow: hidden;
                         padding: 0 5px;
                         font-size: 22px;
-                    }
 
-                    .taskTitleText:hover {
-                        cursor: pointer;
-                        text-decoration: underline;
+                        &:hover {
+                            cursor: pointer;
+                            text-decoration: underline;
+                        }
                     }
 
                     &__toolBar {
@@ -582,10 +582,18 @@ textarea {
                                 overflow-y: scroll;
 
                                 .groupAddingTask {
-                                    width: 300px;
-                                    padding: 5px;
+                                    display: flex;
+                                    position: relative;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    max-width: 600px;
+                                    padding: 5px 0;
                                     border-bottom: 1px solid #dedede;
                                     transition: 0.2s;
+
+                                    span {
+                                        color: $feature-color;
+                                    }
 
                                     .groupAddingTaskTitle {
                                         font-size: 20px;
@@ -605,11 +613,81 @@ textarea {
                                         -webkit-line-clamp: 1;
                                         overflow: hidden;
                                     }
-                                }
 
-                                .groupAddingTask:hover {
-                                    background: #f4f4f4;
-                                    cursor: pointer;
+                                    &__info {
+                                        width: 500px;
+                                        padding: 5px;
+                                        border-right: 1px solid #cdcdcd;
+                                        border-top-left-radius: 5px;
+                                        border-bottom-left-radius: 5px;
+                                        padding-right: 15px;
+
+                                        &:hover {
+                                            background: #f4f4f4;
+                                            cursor: pointer;
+                                        }
+                                    }
+
+                                    &__settings {
+                                        display: flex;
+                                        max-width: 140px;
+                                        padding: 0 10px;
+                                        align-items: center;
+                                        justify-content: space-between;
+
+                                        .isInGroup {
+                                            cursor: default;
+                                            top: 2px;
+                                            right: 70px;
+                                            font-size: 14px;
+                                            position: absolute;
+
+                                            .groupedAlert {
+                                                user-select: none;
+                                            }
+
+                                            &__info {
+                                                position: absolute;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox_container {
+                                            padding: 0 10px;
+
+                                            :hover {
+                                                cursor: pointer;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox {
+                                            display: none;
+
+                                            &:checked~.addTaskCheckbox__itSelf {
+                                                background: orange;
+                                                box-shadow: none
+                                            }
+
+                                            &:checked~.addTaskCheckbox__itSelf::after {
+                                                display: flex;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox__itSelf {
+                                            width: 20px;
+                                            height: 20px;
+                                            border-radius: 2px;
+                                            box-shadow: inset 0px 0px 6px #ababab;
+
+                                            &::after {
+                                                content: "✔";
+                                                align-items: center;
+                                                color: #fff;
+                                                height: 21px;
+                                                font-size: 24px;
+                                                display: none;
+                                            }
+                                        }
+                                    }
                                 }
 
                                 .existTaskInGroup {
@@ -617,6 +695,32 @@ textarea {
                                     padding: 5px;
                                     border-bottom: 1px solid #d6d6d6;
                                     transition: 0.2s;
+                                }
+                            }
+
+                            .tasksMenuFooter {
+                                display: flex;
+                                flex-direction: row-reverse;
+                                position: relative;
+
+                                div {
+                                    background: #fff;
+                                    position: absolute;
+                                    right: -1px;
+                                    top: 0px;
+                                    border-radius: 5px;
+                                    border-top-left-radius: 0;
+                                    border-top-right-radius: 0;
+                                    border: 1px solid #dedede;
+                                    border-top: none;
+                                    box-shadow: 4px 5px 3px #dadada;
+                                }
+
+                                .addChoosedTasks {
+                                    padding: 5px;
+                                    font-size: 18px;
+                                    margin: 5px;
+                                    border-radius: 5px;
                                 }
                             }
                         }
@@ -696,6 +800,15 @@ textarea {
                 transition: 0.2s;
                 background: #fff;
 
+                &:hover .groupNameEditor {
+                    background: #f4f4f4;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    background: #f4f4f4;
+                }
+
                 .groupInfo {
                     &__header {
                         position: relative;
@@ -757,19 +870,10 @@ textarea {
                     overflow: hidden;
                 }
             }
+        }
 
-            .tasksGroup:hover .groupNameEditor {
-                background: #f4f4f4;
-            }
-
-            .tasksGroup:hover {
-                cursor: pointer;
-                background: #f4f4f4;
-            }
-
-            .currentGroup {
-                box-shadow: inset 5px 0px 2px rgb(255 168 82);
-            }
+        .currentGroup {
+            box-shadow: inset 5px 0px 2px rgb(255 168 82);
         }
     }
 }
