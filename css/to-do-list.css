@@ -237,16 +237,26 @@ textarea {
   border-radius: 5px;
 }
 .toDoList__body .adderAndFilters .tasksActions .taskFilters {
+  display: flex;
   padding: 0 10px;
 }
+.toDoList__body .adderAndFilters .tasksActions .taskFilters .clearFiltersBtn {
+  font-size: 15px;
+  border-radius: 5px;
+}
 .toDoList__body .adderAndFilters .tasksActions .taskFilters .filter {
+  display: flex;
+  margin: 0 5px;
+  align-items: center;
   color: rgb(255, 168, 82);
   padding: 0 10px;
   transition: 0.2s;
 }
 .toDoList__body .adderAndFilters .tasksActions .taskFilters .filter:hover {
   cursor: pointer;
-  color: #dedede;
+}
+.toDoList__body .adderAndFilters .tasksActions .taskFilters .ascendDescend {
+  margin-left: 5px;
 }
 .toDoList__body .mainContentContainer {
   padding: 10px 0;

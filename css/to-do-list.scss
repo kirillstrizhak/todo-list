@@ -268,9 +268,18 @@ textarea {
                 }
 
                 .taskFilters {
+                    display: flex;
                     padding: 0 10px;
 
+                    .clearFiltersBtn {
+                        font-size: 15px;
+                        border-radius: 5px;
+                    }
+
                     .filter {
+                        display: flex;
+                        margin: 0 5px;
+                        align-items: center;
                         color: $feature-color;
                         padding: 0 10px;
                         transition: 0.2s;
@@ -278,8 +287,13 @@ textarea {
 
                     .filter:hover {
                         cursor: pointer;
-                        color: $light-grey;
                     }
+
+                    .ascendDescend {
+                        margin-left: 5px;
+                    }
+
+
                 }
             }
         }

@@ -190,23 +190,31 @@ class TaskList {
                 <div class="button addTaskButton">+ Add new task</div>
             </div>
             <div class="taskFilters">
-                <span class="filter">Group</span>
-                <span class="filter">Date added</span>
-                <span class="filter">Date complete by</span>
+                <button class="button clearFiltersBtn disabled">Clear sorting</button>
+                <div class="filter js-titleFilter"><span class="filterName">Title </span><div class="ascendDescend js-sortTitle"><i class="fa-solid fa-sort"></i></div></div>
+                <div class="filter js-dateAddedFilter"><span class="filterName">Date added </span><div class="ascendDescend js-sortDateAdded"><i class="fa-solid fa-sort"></i></div></div>
+                <div class="filter js-dateCompleteFilter"><span class="filterName">Date complete </span><div class="ascendDescend js-sortDateComplete"><i class="fa-solid fa-sort"></i></div></div>
             </div>
         </div>
         `
+        this.renderTasksInList(this.tasks)
+
+        taskAdd.init()
+        filters.init()
+    }
+
+    renderTasksInList(tasksArray) {
         document.querySelector('.mainContentContainer').innerHTML = '<div class="taskList"></div>';
         let renderedTaskList = document.querySelector('.taskList');
-        if (this.tasks.length > 0) {
+        if (tasksArray.length > 0) {
             let emptyList = '';
-            this.tasks.forEach(task => {
+            tasksArray.forEach(task => {
                 emptyList += newTask.render(task.title, task.id, task.description);
                 return emptyList;
             })
             renderedTaskList.innerHTML = emptyList;
 
-            this.tasks.forEach((task) => {
+            tasksArray.forEach((task) => {
                 this.saveEditedTask(task);
                 this.showOrHideToolBar(task);
                 document.querySelector(`.js-delete-btn${task.id}`).addEventListener('click', () => this.removeTask(task));
@@ -222,7 +230,6 @@ class TaskList {
                 </div>
             </div>`
         }
-        taskAdd.init()
     }
 
     renderTask(task) {
@@ -571,7 +578,12 @@ class TaskGroups {
         groupBlock.style.marginBottom = null
         saveBtn.style.display = 'none';
         toolBar.style.display = 'flex';
-        groupBody.innerHTML = `<p class="groupNameText js-groupNameText${group.number}">${group.name}</p>`;
+        if (group.name > 0) {
+            groupBody.innerHTML = `<p class="groupNameText js-groupNameText${group.number}">${group.name}</p>`;
+        } else {
+            groupBody.innerHTML = `<p class="groupNameText js-groupNameText${group.number}">Group</p>`;
+        }
+
     }
 
     addGroup() {
@@ -787,7 +799,6 @@ class ChoosingTaskMenu {
         } else {
             addingTasksList.innerHTML = `<p>Task list is empty, you need create task, to add it to group</p>`
         }
-        console.log(this.choosedTasks)
     }
 
     activateOrDeactivateCheckbox(task) {
@@ -815,7 +826,6 @@ class ChoosingTaskMenu {
         } else {
             this.choosedTasks.splice(this.choosedTasks.indexOf(task), 1);
         }
-        console.log(this.choosedTasks)
     }
 
     addChoosedTasksToGroup(group) {
@@ -824,7 +834,6 @@ class ChoosingTaskMenu {
         })
         this.choosedTasks = [];
         taskGroups.renderTasksInGroup(group)
-        console.log(group.tasks)
     }
 
     showTaskGroupName(task) {
@@ -849,9 +858,145 @@ class ChoosingTaskMenu {
     }
 
     init(task) {
-        //this.activateOrDeactivateCheckbox(task);
         this.chooseAddingTask(task)
         this.activateAddChoosedTasksButton()
+    }
+}
+
+class Filters {
+    constructor() {
+        this.filtersProperties = {
+            byTitle: { isActive: false, direction: 'none' },
+            byDateAdded: { isActive: false, direction: 'none' },
+            byDateComplete: { isActive: false, direction: 'none' }
+        }
+    }
+
+    filterByTitle(direction) {
+        let sortedTasks = taskList.tasks.slice();
+        sortedTasks.sort(function sortfunction(a, b) {
+            let titleA = a.title.toLowerCase();
+            let titleB = b.title.toLowerCase();
+            if (direction == 'default') {
+                if (titleA < titleB) {
+                    return -1;
+                }
+                if (titleA > titleB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                if (titleA < titleB) {
+                    return 1;
+                }
+                if (titleA > titleB) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+
+        })
+
+        filters.filtersProperties.byTitle.direction = direction;
+        filters.filtersProperties.byTitle.isActive = true;
+        taskList.renderTasksInList(sortedTasks);
+    }
+
+    filterByCompleteDate(direction) {
+        let sortedTasks = taskList.tasks.slice();
+        sortedTasks.sort(function sortfunction(a, b) {
+            let dateA = new Date(a.completeDate.year, a.completeDate.month, a.completeDate.day);
+            let dateB = new Date(b.completeDate.year, b.completeDate.month, b.completeDate.day);
+            if (direction == 'default') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+
+        })
+
+        filters.filtersProperties.byDateComplete.direction = direction;
+        filters.filtersProperties.byDateComplete.isActive = true;
+        taskList.renderTasksInList(sortedTasks);
+    }
+
+    filterByDateAdded(direction) {
+        let sortedTasks = taskList.tasks.slice();
+        sortedTasks.sort(function sortfunction(a, b) {
+            let dateA = new Date(a.createDate.year, a.createDate.month, a.createDate.day);
+            let dateB = new Date(b.createDate.year, b.createDate.month, b.createDate.day);
+            if (direction == 'default') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+        })
+
+        filters.filtersProperties.byDateAdded.direction = direction;
+        filters.filtersProperties.byDateAdded.isActive = true;
+        taskList.renderTasksInList(sortedTasks);
+    }
+
+    disableFilters() {
+        if (taskList.tasks.length > 1) {
+            let caretElems = document.querySelectorAll('.ascendDescend');
+            caretElems.forEach(elem => {
+                elem.innerHTML = '<i class="fa-solid fa-sort"></i>'
+            })
+
+            for (let property in this.filtersProperties) {
+                this.filtersProperties[property].isActive = false;
+                this.filtersProperties[property].direction = 'none';
+            }
+
+            taskList.renderTasksInList(taskList.tasks);
+            this.isFilterActiveHandler()
+        }
+
+    }
+
+    isFilterActiveHandler() {
+        let clearFiltersBtn = document.querySelector('.clearFiltersBtn');
+        if (this.isFilterActive = false) {
+            clearFiltersBtn.classList.add('disabled')
+        } else {
+            clearFiltersBtn.addEventListener('click', () => this.disableFilters());
+            clearFiltersBtn.classList.remove('disabled');
+        }
+    }
+
+    filterDirectionHandler(isActive, direction, func, elem) {
+        let caretElem = document.querySelector(elem)
+        if (taskList.tasks.length > 1) {
+            this.disableFilters()
+            if (direction != 'none') {
+                if (isActive = true) {
+                    if (direction == 'default') {
+                        direction = 'reverse';
+                        caretElem.innerHTML = '<i class="fa-solid fa-caret-up"></i>'
+                        func(direction);
+                    } else {
+                        direction = 'default';
+                        caretElem.innerHTML = '<i class="fa-solid fa-caret-down"></i>'
+                        func(direction);
+                    }
+                }
+            } else {
+                caretElem.innerHTML = '<i class="fa-solid fa-caret-down"></i>'
+                func('default');
+            }
+        }
+
+    }
+
+    init() {
+        document.querySelector('.js-titleFilter').addEventListener('click', () => this.filterDirectionHandler(this.filtersProperties.byTitle.isActive, this.filtersProperties.byTitle.direction, this.filterByTitle, '.js-sortTitle'));
+        document.querySelector('.js-dateAddedFilter').addEventListener('click', () => this.filterDirectionHandler(this.filtersProperties.byDateAdded.isActive, this.filtersProperties.byDateAdded.direction, this.filterByDateAdded, '.js-sortDateAdded'));
+        document.querySelector('.js-dateCompleteFilter').addEventListener('click', () => this.filterDirectionHandler(this.filtersProperties.byDateComplete.isActive, this.filtersProperties.byDateComplete.direction, this.filterByCompleteDate, '.js-sortDateComplete'));
+
+        this.isFilterActiveHandler()
     }
 }
 
@@ -879,6 +1024,7 @@ const newGroupTemplate = new Group;
 const taskGroups = new TaskGroups;
 const choosingTaskMenu = new ChoosingTaskMenu;
 const navBar = new NavBar;
+const filters = new Filters;
 
 taskAdd.init()
 taskList.init()
