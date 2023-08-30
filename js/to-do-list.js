@@ -33,38 +33,90 @@ class TaskAdder {
         }
     }
 
-    addTaskToList() {
+    createTask() {
+        let taskDate = this.createToday();
+        let taskCompleteDate = this.createToday();
+        let addedTask = {
+            title: ``, description: '', createDate: taskDate, completeDate: taskCompleteDate, group: 'No group', lastGroupNumber: 'none', subtasks: [], id: 1, isComplete: false
+        };
+
+        this.dateFormatHandler(addedTask)
+
+        return addedTask;
+    }
+
+    renderNewTask(task) {
+        let tasksArray = taskList.tasks;
+        let taskEditors = document.querySelector(`.js-taskId${task.id - 1}`);
+
+        if (task.title.length != 0) {
+            taskEditors.remove();
+            tasksArray.push(task);
+        }
+
+        if (tasksArray.indexOf(task) != 0) {
+            let previewTaskIndex = tasksArray.indexOf(task) - 1;
+            task.id += tasksArray[previewTaskIndex].id;
+        }
+
+        taskList.renderTasksInList(taskList.tasks);
+        this.oneTimeOneAdding();
+    }
+
+    createAddingForm(task) {
         let noTasks = document.querySelector('.noTasks');
         if (noTasks) {
             noTasks.remove()
         }
-        let taskDate = this.createToday();
-        let taskCompleteDate = this.createToday();
-        let addedTask = { title: ``, description: '', createDate: taskDate, completeDate: taskCompleteDate, group: 'No group', lastGroupNumber: 'none', tags: [{ name: 'No tags' }], id: 1 };
 
-        this.dateFormatHandler(addedTask)
+        let editorId = task.id - 1;
+        let list = document.querySelector('.taskList');
+        list.insertAdjacentHTML('beforeend', newTask.renderEditor(task.title, editorId, task.description));
+        taskList.resizeInputsWhenInput(task);
 
-        taskList.tasks.push(addedTask);
-        taskList.renderTask(addedTask);
-        document.querySelector(`.js-delete-btn${addedTask.id}`).addEventListener('click', () => taskList.removeTask(addedTask));
-        document.querySelector(`.js-edit-btn${addedTask.id}`).addEventListener('click', () => taskList.oneTimeOneEdit(addedTask));
-        document.querySelector(`.js-saveTask-btn${addedTask.id}`).addEventListener('click', () => taskList.saveEditedTask(addedTask));
-        document.querySelector(`.confirmAdding-btn${addedTask.id}`).addEventListener('click', () => taskList.confirmTaskAdding(addedTask));
-        document.querySelector(`.cancelAdding-btn${addedTask.id}`).addEventListener('click', () => taskList.removeTask(addedTask));
-        this.attachTaskPopup(addedTask);
-        this.dateHandler(addedTask);
-        taskList.resizeInputsWhenInput(addedTask);
-        let titleEditor = document.querySelector(`.js-titleEditor${addedTask.id}`);
+        let titleEditor = document.querySelector(`.js-titleEditor${editorId}`);
         titleEditor.addEventListener('input', () => {
-            addedTask.title = titleEditor.value;
+            task.title = titleEditor.value;
             if (titleEditor.value.length <= 0) {
-                document.querySelector(`.confirmAdding-btn${addedTask.id}`).className = `taskConfirmAdding confirmAdding-btn${addedTask.id} inactiveButton`
+                document.querySelector(`.confirmAdding-btn${editorId}`).className = `taskConfirmAdding confirmAdding-btn${editorId} inactiveButton`
             } else {
-                document.querySelector(`.confirmAdding-btn${addedTask.id}`).className = `taskBtn taskConfirmAdding button confirmAdding-btn${addedTask.id}`
+                document.querySelector(`.confirmAdding-btn${editorId}`).className = `taskBtn taskConfirmAdding button confirmAdding-btn${editorId}`
             }
         })
-        taskList.deactivateAddButton()
-        taskList.showOrHideToolBar(addedTask)
+
+        document.querySelector(`.confirmAdding-btn${editorId}`).addEventListener('click', () => {
+            if (titleEditor.value.length > 0) {
+                this.renderNewTask(task)
+            }
+        });
+        document.querySelector(`.cancelAdding-btn${editorId}`).addEventListener('click', () => {
+            document.querySelector(`.js-taskId${editorId}`).remove();
+            let list = document.querySelector('.taskList');
+            if (list) {
+                let noTasks = document.querySelector('.noTasks');
+                if (!noTasks && taskList.tasks.length <= 0) {
+                    list.innerHTML = `<div class="noTasks">
+                <div class="noTasksInfo">
+                    <img src="./img/notepad.jpg" alt="notepad">
+                    <span>You have not added any tasks yet. But it's never too late to do it!</span>
+                </div>
+            </div>`
+                }
+            }
+            this.oneTimeOneAdding()
+        });
+    }
+
+    oneTimeOneAdding() {
+        let addButton = document.querySelector('.addTaskButton');
+        let titleEditor = document.querySelector('.taskTitleEditor');
+        if (titleEditor && addButton) {
+            addButton.classList.add('hidden');
+            addButton.style.transition = '0s'
+        } else if (addButton) {
+            addButton.classList.remove('hidden');
+            addButton.style.transition = '0.2s'
+        }
     }
 
     dateFormatHandler(task) {
@@ -72,41 +124,37 @@ class TaskAdder {
             task.createDate.day = '0' + task.createDate.day;
         }
 
-        if (task.createDate.month < 10) {
-            task.createDate.month = '0' + task.createDate.month;
-        }
+        // if (task.createDate.month < 10) {
+        //     task.createDate.month = '0' + task.createDate.month;
+        // }
 
         if (task.completeDate.day < 10) {
             task.completeDate.day = '0' + task.completeDate.day;
         }
 
-        if (task.completeDate.month < 10) {
-            task.completeDate.month = '0' + task.completeDate.month;
-        }
+        // if (task.completeDate.month < 10) {
+        //     task.completeDate.month = '0' + task.completeDate.month;
+        // }
     }
 
     attachTaskPopup(task) {
-        const popupNotification = new Popup(task.title, task.description, task, new PopupGroups(task), new Calendar(task));
+        const popupNotification = new Popup(task.title, task.description, task, new PopupGroups(task), new Calendar(task), new Subtasks);
         let popupOpener = document.querySelector(`.js-titleText${task.id}`);
         if (popupOpener) {
-            popupOpener.addEventListener('click', () => popupNotification.show('taskModal', `${task.id}`));
+            popupOpener.addEventListener('click', () => {
+                if (task.isComplete == false) {
+                    popupNotification.show('taskModal', task.id)
+                }
+            });
         }
-    }
-
-    oneTimeOneAdding() {
-        let addTaskButton = document.querySelector('.addTaskButton');
-        addTaskButton.addEventListener('click', () => taskList.deactivateAddButton());
-        addTaskButton.addEventListener('click', () => this.addTaskToList());
     }
 
     init() {
         let addTaskButton = document.querySelector('.addTaskButton');
         if (addTaskButton) {
-            this.oneTimeOneAdding()
-        } else {
-            console.log('task list not initialized')
+            addTaskButton.addEventListener('click', () => this.createAddingForm(taskAdd.createTask()))
+            addTaskButton.addEventListener('click', () => this.oneTimeOneAdding())
         }
-        //taskList.searchTaskInit()
     }
 }
 
@@ -118,16 +166,12 @@ class Task {
             <div class="task__header">
                 <div class="taskTitle js-title${id}">
                 <textarea class="taskTitleEditor js-titleEditor${id} inactiveText" type="text" maxlength="200" placeholder="Task title">${title}</textarea></p></div>
-                <div style="display: none;" class="task__header__toolBar js-taskToolBar${id}">
-                    <div class="taskBtn taskDelete button js-delete-btn${id}"><span><i class="fa-solid fa-trash"></i></span></div>
-                    <div class="taskBtn taskedit button js-edit-btn${id}"><span><i class="fa-solid fa-pencil"></i></span></div> 
-                </div> 
             </div> 
             <div class="task__body js-body${id}">
             <textarea class="taskDescrEditor js-descr${id}" placeholder="Description" maxlength="3000">${description}</textarea>
             </div>
-            <div style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
             <div class="task__footer js-taskFooter${id}">
+            <div style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
             <div class="taskConfirmAdding confirmAdding-btn${id} inactiveButton"><span>Add task</i></span></div>
             <div class="taskBtn taskCancelAdding button cancelAdding-btn${id}"><span>Cancel</i></span></div>
             </div>
@@ -135,21 +179,29 @@ class Task {
         `
     }
 
-    render(title, id, description) {
+    render(title, id, description, date, group) {
         return `
         <div class="task taskListView js-taskId${id}">
             <div class="task__header">
                 <div class="taskTitle js-title${id}"><p class="taskTitleText js-titleText${id}">${title}</p></div>
                 <div style="display: none;" class="task__header__toolBar js-taskToolBar${id}">
-                    <div class="taskBtn taskDelete button js-delete-btn${id}"><span><i class="fa-solid fa-trash"></i></span></div>
-                    <div class="taskBtn taskedit button js-edit-btn${id}"><span><i class="fa-solid fa-pencil"></i></span></div>
+                    <div class="completeTaskCircle js-completeCircle${id}"></div>
+                    <div class="tools">
+                        <div class="taskBtn taskDelete button js-delete-btn${id} taskTool"><span><i class="fa-solid fa-trash"></i></span></div>
+                        <div class="taskBtn taskedit button js-edit-btn${id} taskTool"><span><i class="fa-solid fa-pencil"></i></span></div>
+                    </div>
                 </div> 
             </div> 
             <div class="task__body js-body${id}">
                 <p class="taskDescrText inactiveText">${description}</p>
             </div>
-            <div  style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
             <div class="task__footer js-taskFooter${id}">
+                <div  style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
+            </div>
+            <div class="task__footer js-taskInfo${id}">
+                    <div><span>${date.day}.${date.month}.${date.year}</span>
+                    <span class="js-taskGroupedLabel${id}"><span style="font-weight: bold; color: #ababab;">Group: </span>${group}</span>
+                </div>
             </div>
         </div>
         `
@@ -160,17 +212,17 @@ class Task {
         <div class="task taskListView js-taskId${id}">
             <div class="task__header">
                 <div class="taskTitle js-title${id}"><p class="taskTitleText js-titleText${id}">${title}</p></div>
-                <div style="display: none;" class="task__header__toolBar js-taskToolBar${id}">
+                <div style="justify-content: end; z-index: 2; display: none; width: fit-content;" class="task__header__toolBar js-taskToolBar${id}">
                     <div class="taskBtn taskDelete button js-delete-btn${id}"><span><i class="fa-solid fa-trash"></i></span></div>
-                    <div class="taskBtn taskedit button js-edit-btn${id}"><span><i class="fa-solid fa-pencil"></i></span></div>
+                    <div class="taskBtn taskedit button js-edit-btn${id}" style="margin: 5px;"><span><i class="fa-solid fa-pencil"></i></span></div>
                     <div class="taskBtn taskRemoveFromGroup button js-rfg-btn${id}"><span><i class="fa-solid fa-xmark"></i></span></div>
                 </div> 
             </div> 
             <div class="task__body js-body${id}">
                 <p class="taskDescrText inactiveText">${description}</p>
             </div>
-            <div  style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
             <div class="task__footer js-taskFooter${id}">
+                <div  style="display: none;" class="taskBtn taskSave button js-saveTask-btn${id}"><span>Save</i></span></div>
             </div>
         </div>
         `
@@ -181,6 +233,7 @@ class TaskList {
     constructor() {
         this.tasks = [];
         this.dates = [];
+        this.completedTasks = [];
     }
 
     renderList() {
@@ -188,6 +241,10 @@ class TaskList {
         <div class="tasksActions">
                 <div class="addTaskForm">
                 <div class="button addTaskButton">+ Add new task</div>
+            </div>
+            <div class="searchTaskInGroup">
+                <input type="text" placeholder="Enter task to find it..." style="height: 25px">
+                <span><i class="fa-solid fa-magnifying-glass"></i></span>
             </div>
             <div class="taskFilters">
                 <button class="button clearFiltersBtn disabled">Clear sorting</button>
@@ -209,7 +266,7 @@ class TaskList {
         if (tasksArray.length > 0) {
             let emptyList = '';
             tasksArray.forEach(task => {
-                emptyList += newTask.render(task.title, task.id, task.description);
+                emptyList += newTask.render(task.title, task.id, task.description, task.createDate, task.group);
                 return emptyList;
             })
             renderedTaskList.innerHTML = emptyList;
@@ -220,6 +277,7 @@ class TaskList {
                 document.querySelector(`.js-delete-btn${task.id}`).addEventListener('click', () => this.removeTask(task));
                 document.querySelector(`.js-edit-btn${task.id}`).addEventListener('click', () => this.oneTimeOneEdit(task));
                 document.querySelector(`.js-saveTask-btn${task.id}`).addEventListener('click', () => this.saveEditedTask(task));
+                document.querySelector(`.js-completeCircle${task.id}`).addEventListener('click', () => this.completeTask(task));
             })
         } else {
             renderedTaskList.innerHTML = `
@@ -240,6 +298,10 @@ class TaskList {
         document.querySelector('.taskList').insertAdjacentHTML('beforeend', newTask.renderEditor(task.title, task.id, task.description));
     }
 
+    renderDatedList(tasksArray) {
+
+    }
+
     removeTask(task) {
         let addButton = document.querySelector('.addTaskButton');
         let tasksArray = taskList.tasks;
@@ -252,9 +314,14 @@ class TaskList {
         if (addButton) {
             this.deactivateAddButton()
         }
+
         let list = document.querySelector('.taskList');
+        let groups = document.querySelector('.taskGroups');
+        let noTasks = document.querySelector('.noTasks');
+
+        let noGroupTasks = document.querySelector('.noGroupTasks');
+        let groupTasksContainer = document.querySelector('.groupTasksContainer');
         if (list) {
-            let noTasks = document.querySelector('.noTasks');
             if (!noTasks && tasksArray.length <= 0) {
                 list.innerHTML = `<div class="noTasks">
                 <div class="noTasksInfo">
@@ -263,28 +330,45 @@ class TaskList {
                 </div>
             </div>`
             }
+        } else if (groups && task.lastGroupNumber != 'none') {
+            let taskGroup = taskGroups.groups[task.lastGroupNumber];
+            let tasksInGroup = taskGroup.tasks;
+            if (!noGroupTasks && tasksInGroup.length <= 0) {
+                groupTasksContainer.classList.add('centeredContent');
+                groupTasksContainer.innerHTML = `
+                <div class="noGroupTasks">
+                    <img src="./img/notepad-empty.jpg" alt="noTasks">
+                    <p>Group <span>${taskGroup.name}</span> is empty</p>
+                </div>
+                `
+            }
         }
     }
 
     confirmTaskAdding(task) {
-        let taskBody = document.querySelector(`.js-taskId${task.id}`);
+        let taskBodyEditor = document.querySelector(`.js-taskId${task.id}`);
+        let taskList = document.querySelector('.taskList');
+
         if (task.title.length > 0) {
-            taskBody.style.cssText = `border: 1px solid transparent; border-bottom: 1px solid #dedede; border-radius: 0;`
-            document.querySelector(`.js-title${task.id}`).innerHTML = `<p class="taskTitleText js-titleText${task.id}">${task.title}</p>`;
-            document.querySelector(`.js-taskFooter${task.id}`).style.display = 'none'
-            document.querySelector(`.confirmAdding-btn${task.id}`).remove();
-            document.querySelector(`.cancelAdding-btn${task.id}`).remove();
-            document.querySelector(`.js-body${task.id}`).innerHTML = `<p class="taskDescrText inactiveText">${task.description}</p>`;
+            taskBodyEditor.remove();
+            taskList.insertAdjacentHTML('beforeend', newTask.render(task.title, task.id, task.description, task.createDate, task.group));
+            let taskBody = document.querySelector(`.js-taskId${task.id}`);
+            taskBody.style.cssText = `border: 1px solid transparent; border-bottom: 1px solid #dedede; border-radius: 0;`;
+            document.querySelector(`.js-delete-btn${task.id}`).addEventListener('click', () => this.removeTask(task));
+            document.querySelector(`.js-edit-btn${task.id}`).addEventListener('click', () => this.oneTimeOneEdit(task));
+            document.querySelector(`.js-saveTask-btn${task.id}`).addEventListener('click', () => this.saveEditedTask(task));
         }
+
         taskAdd.attachTaskPopup(task);
         this.deactivateAddButton()
+        this.showOrHideToolBar(task)
     }
 
     editTaskForm(task) {
         let taskBody = document.querySelector(`.js-taskId${task.id}`);
         let header = document.querySelector(`.js-title${task.id}`);
         let body = document.querySelector(`.js-body${task.id}`);
-        taskBody.style.cssText = `border: 1px solid transparent; border: 1px solid #cdcdcd; border-radius: 10px;`
+        taskBody.style.cssText = `border: 1px solid transparent; border: 1px solid #cdcdcd; border-radius: 10px; margin-bottom: 45px;`
         header.innerHTML = `
         <textarea class="taskTitleEditor inactiveText" type="text" maxlength="200" placeholder="Task title">${task.title}</textarea>`
         body.innerHTML = `
@@ -293,6 +377,10 @@ class TaskList {
         this.resizeInputsWhenInput(task);
         document.querySelector(`.js-saveTask-btn${task.id}`).style.display = 'flex';
         document.querySelector(`.js-saveTask-btn${task.id}`).addEventListener('click', () => this.saveEditedTask(task));
+        let taskInfo = document.querySelector(`.js-taskInfo${task.id}`);
+        if (taskInfo) {
+            taskInfo.classList.add('disabled')
+        }
         this.deactivateAddButton();
 
         let groupTasks = document.querySelector(`.tasksOfGroup`);
@@ -303,7 +391,7 @@ class TaskList {
 
     resizeInputsWhenInput(task) {
         let titleEditor = document.querySelector('.taskTitleEditor');
-        titleEditor.style.height = (titleEditor.scrollHeight) + "px";
+        titleEditor.style.height = (titleEditor.scrollHeight / 2) + "px";
         titleEditor.addEventListener('input', () => {
             titleEditor.style.height = "1px";
             titleEditor.style.height = (titleEditor.scrollHeight) + "px";
@@ -314,7 +402,7 @@ class TaskList {
             }
         })
         let descriptionEditor = document.querySelector('.taskDescrEditor');
-        descriptionEditor.style.height = (descriptionEditor.scrollHeight) + "px";
+        descriptionEditor.style.height = (descriptionEditor.scrollHeight / 2) + "px";
         descriptionEditor.addEventListener('input', () => {
             descriptionEditor.style.height = "1px";
             descriptionEditor.style.height = (descriptionEditor.scrollHeight) + "px";
@@ -328,12 +416,16 @@ class TaskList {
 
     saveEditedTask(task) {
         let taskBody = document.querySelector(`.js-taskId${task.id}`);
+        let taskFooter = document.querySelector(`.js-taskInfo${task.id}`);
         taskBody.style.cssText = `border: 1px solid transparent; border-bottom: 1px solid #dedede; border-radius: 0;`
         document.querySelector(`.js-saveTask-btn${task.id}`).style.display = 'none';
         document.querySelector(`.js-title${task.id}`).innerHTML = `<p class="taskTitleText js-titleText${task.id}">${task.title}</p>`;
         document.querySelector(`.js-body${task.id}`).innerHTML = `<p class="taskDescrText inactiveText">${task.description}</p>`;
-        taskAdd.attachTaskPopup(task);
+        if (taskFooter) {
+            taskFooter.classList.remove('disabled');
+        }
         this.deactivateAddButton();
+        taskAdd.attachTaskPopup(task);
     }
 
     oneTimeOneEdit(task) {
@@ -350,9 +442,11 @@ class TaskList {
         let addButton = document.querySelector('.addTaskButton');
         let titleEditor = document.querySelector('.taskTitleEditor');
         if (titleEditor && addButton) {
-            addButton.style.display = 'none';
+            addButton.style.transition = '0s'
+            addButton.style.visibility = 'hidden';
         } else if (addButton) {
-            addButton.style.display = 'block';
+            addButton.style.transition = '0.2s'
+            addButton.style.visibility = 'visible';
         }
     }
 
@@ -369,7 +463,7 @@ class TaskList {
         let taskFooter = document.querySelector(`.js-taskFooter${task.id}`);
         let taskBlock = document.querySelector(`.js-taskId${task.id}`);
         taskBlock.addEventListener('mouseenter', (e) => {
-            if (e.target == taskBlock && saveBtn.style.display != 'flex' && taskFooter.style.display !== 'flex') {
+            if (e.target == taskBlock && saveBtn.style.display !== 'flex') {
                 toolBar.style.display = 'flex';
             }
         });
@@ -380,12 +474,28 @@ class TaskList {
         })
     }
 
+    completeTask(task) {
+        let taskTitleCrossed = document.querySelector(`.js-titleText${task.id}`);
+        let taskCompleteCircle = document.querySelector(`.js-completeCircle${task.id}`);
+        if (taskCompleteCircle) {
+            taskCompleteCircle.classList.add('hidden');
+        }
+        taskTitleCrossed.style.textDecoration = 'line-through'
+        task.isComplete = true;
+
+        setTimeout(() => {
+            this.completedTasks.push(task);
+            this.removeTask(task);
+        }, 800)
+    }
+
     init() {
         let renderedTaskList = document.querySelector('.taskList');
         this.renderList()
         if (!renderedTaskList) {
             document.querySelector('#alltasks').addEventListener('click', () => taskList.renderList());
         }
+        taskGroups.searchTaskInGroupLive()
     }
 }
 
@@ -404,7 +514,7 @@ class Group {
             <div class="groupInfo__body js-groupBody${number}">
                 <p class="groupNameText">${name}</p>
             </div>
-            <div class="groupBtn button js-saveGroupBtn${number} groupSaveBtn"  style="display: none;">Save</div>
+            <div class="groupBtn button js-saveGroupBtn${number} groupSaveBtn" style="display: none;">Save</div>
         </div>
     </div>`
     }
@@ -436,14 +546,23 @@ class TaskGroups {
             </div>
         </div>
         `;
-        document.querySelector('.addNewGroupButton').addEventListener('click', () => this.addGroup())
+        document.querySelector('.addNewGroupButton').addEventListener('click', () => this.addGroup());
         let renderedGroupsList = document.querySelector('.groups');
-        let emptyGroupsList = '';
-        this.groups.forEach(group => {
-            emptyGroupsList += newGroupTemplate.render(group.name, group.number);
-            return emptyGroupsList;
-        });
-        renderedGroupsList.innerHTML = emptyGroupsList;
+        if (this.groups.length > 0) {
+            let emptyGroupsList = '';
+            this.groups.forEach(group => {
+                emptyGroupsList += newGroupTemplate.render(group.name, group.number);
+                return emptyGroupsList;
+            });
+            renderedGroupsList.innerHTML = emptyGroupsList;
+        } else {
+            renderedGroupsList.classList.add('centeredContent')
+            renderedGroupsList.innerHTML = `
+            <div class="noGroups">
+                You have not created any groups yet, to create a group, click on the "+" button
+            </div>
+            `
+        }
         this.groups.forEach(group => {
             let groupBlock = document.querySelector(`.js-group${group.number}`)
             groupBlock.addEventListener('click', (e) => {
@@ -457,7 +576,6 @@ class TaskGroups {
             });
             document.querySelector(`.js-editGroupBtn${group.number}`).addEventListener('click', () => this.editGroupName(group));
             document.querySelector(`.js-deleteGroupBtn${group.number}`).addEventListener('click', () => this.deleteGroup(group));
-
         })
     }
 
@@ -578,7 +696,7 @@ class TaskGroups {
         groupBlock.style.marginBottom = null
         saveBtn.style.display = 'none';
         toolBar.style.display = 'flex';
-        if (group.name > 0) {
+        if (group.name.length > 0) {
             groupBody.innerHTML = `<p class="groupNameText js-groupNameText${group.number}">${group.name}</p>`;
         } else {
             groupBody.innerHTML = `<p class="groupNameText js-groupNameText${group.number}">Group</p>`;
@@ -589,12 +707,18 @@ class TaskGroups {
     addGroup() {
         let groupInput = document.querySelector('.groupNameInput');
         let groupName = this.createGroupName();
+        let groupsList = document.querySelector('.groups');
         let newGroup = { name: groupName, number: 0, tasks: [] };
         let newUntitledGroup = { name: 'New group', number: 0, tasks: [] };
+
+        if (this.groups.length <= 0) {
+            groupsList.innerHTML = ''
+        }
+        groupsList.classList.remove('centeredContent')
         if (groupName.length > 0) {
             this.groups.push(newGroup);
             newGroup.number += this.groups.length - 1;
-            document.querySelector('.groups').insertAdjacentHTML('beforeend', newGroupTemplate.render(newGroup.name, newGroup.number));
+            groupsList.insertAdjacentHTML('beforeend', newGroupTemplate.render(newGroup.name, newGroup.number));
             let groupBlock = document.querySelector(`.js-group${newGroup.number}`);
             groupBlock.addEventListener('click', (e) => {
                 let saveBtn = document.querySelector(`.js-saveGroupBtn${newGroup.number}`);
@@ -610,7 +734,7 @@ class TaskGroups {
         } else {
             this.groups.push(newUntitledGroup);
             newUntitledGroup.number += this.groups.length - 1;
-            document.querySelector('.groups').insertAdjacentHTML('beforeend', newGroupTemplate.render(newUntitledGroup.name, newUntitledGroup.number));
+            groupsList.insertAdjacentHTML('beforeend', newGroupTemplate.render(newUntitledGroup.name, newUntitledGroup.number));
             let groupBlock = document.querySelector(`.js-group${newUntitledGroup.number}`);
             groupBlock.addEventListener('click', (e) => {
                 let saveBtn = document.querySelector(`.js-saveGroupBtn${newUntitledGroup.number}`);
@@ -633,15 +757,23 @@ class TaskGroups {
         let groupTasksActions = document.querySelector('.groupTasksActions');
         let groupTasksContainer = document.querySelector('.groupTasksContainer');
         let groupTasksList = document.querySelector(`.js-tasksOfGroup${group.number}`);
+        let renderedGroupsList = document.querySelector('.groups');
 
         group.tasks.forEach(task => {
             let taskInAllTasksArray = taskList.tasks.find(groupedTask => groupedTask.id == task.id);
             taskInAllTasksArray.group = 'No group';
         })
 
-
         groupsArray.splice(groupsArray.indexOf(group, 1));
         groupTemplate.remove();
+        if (this.groups.length <= 0) {
+            renderedGroupsList.classList.add('centeredContent')
+            renderedGroupsList.innerHTML = `
+            <div class="noGroups">
+                You have not created any groups yet, to create a group, click on the "+" button
+            </div>
+            `
+        }
         if (groupTasksList) {
             groupTasksActions.innerHTML = '';
             groupTasksContainer.classList.add('centeredContent');
@@ -748,6 +880,7 @@ class ChoosingTaskMenu {
                 </label>
             </div>
        </div>
+       <div class="groupPrompt js-groupPrompt${task.id} disabled">This task is in group named <b>${task.group}</b></div>
        `
         } else {
             taskTemplate = `
@@ -790,7 +923,12 @@ class ChoosingTaskMenu {
                 if (groupName) {
                     groupName.addEventListener('mouseenter', (e) => {
                         if (e.target == groupName) {
-                            this.showTaskGroupName(task);
+                            this.showGroupPrompt(task);
+                        }
+                    });
+                    groupName.addEventListener('mouseleave', (e) => {
+                        if (e.target == groupName) {
+                            this.hideGroupPrompt(task);
                         }
                     })
                 }
@@ -836,15 +974,14 @@ class ChoosingTaskMenu {
         taskGroups.renderTasksInGroup(group)
     }
 
-    showTaskGroupName(task) {
-        let isInGroupInfo = document.querySelector(`.js-ingInfo${task.id}`);
-        //isInGroupInfo.classList.remove('disabled');
+    showGroupPrompt(task) {
+        let prompt = document.querySelector(`.js-groupPrompt${task.id}`);
+        prompt.classList.remove('disabled');
     }
 
-    hideTaskGroupName(task) {
-        let isInGroupInfo = document.querySelector(`.js-ingInfo${task.id}`);
-        //isInGroupInfo.classList.add('disabled');
-        //Тут нужно будет сделать небольшой алерт, предупреждающий о том, что задачу уже находится в другой группе
+    hideGroupPrompt(task) {
+        let prompt = document.querySelector(`.js-groupPrompt${task.id}`);
+        prompt.classList.add('disabled');
     }
 
     closeChoosingTaskMenu() {

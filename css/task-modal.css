@@ -60,7 +60,7 @@
     justify-content: space-around;
 }
 
-.modal-edit {
+.modalEdit {
     font-size: 15px;
     color: #fff;
     transition: 0.1s;
@@ -108,21 +108,30 @@
     color: #cdcdcd;
 }
 
-.popupSaveBar {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
 .savePopup-btn {
-    margin: 10px 0;
+    width: fit-content;
+    margin-top: 10px;
     font-size: 18px;
     padding: 5px 25px;
 }
 
+.subtaskCountLine {
+    width: 40%;
+    height: 0;
+    border-top: 1px solid #adadad;
+}
+
+.subtasksCount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    font-size: 19px;
+    color: #adadad;
+}
+
 .addSubTask {
+    width: fit-content;
     display: flex;
     align-items: center;
     height: 30px;
@@ -134,6 +143,7 @@
     display: flex;
     position: relative;
     margin-top: 10px;
+    min-height: 92%;
     max-height: 92%;
 }
 
@@ -183,11 +193,11 @@
     border-radius: 5px;
 }
 
-.popupText {
+/* .popupText {
     padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid #cdcdcd;
-}
+} */
 
 .popupTaskInf {
     border: 1px solid transparent;
@@ -210,12 +220,13 @@
     font-weight: 500;
 }
 
-.popupTaskTitle span, .popupTaskDescr span {
+.popupTaskTitle p, .popupTaskDescr p {
     padding: 0 5px;
 }
 
 .popupTaskDescr {
     font-size: 16px;
+    width: 101%;
     min-height: 94px;
     color: #747474;
 }
@@ -223,7 +234,7 @@
 .popupEditor {
     overflow-y: scroll;
     width: 675px;
-    padding-left: 25px;
+    padding: 0 25px;
     max-height: inherit;
 }
 
@@ -391,8 +402,6 @@
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    /* margin-top: 10px; */
-    /* border: 1px solid #dedede; */
     overflow-y: scroll;
     max-height: 300px;
 }
@@ -656,6 +665,71 @@ th {
 
 .monthField {
     font-size: 17px;
+}
+
+.subtask {
+    margin-top: 15px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.subSave {
+    top: 10px;
+}
+
+.subText {
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.forkInfo {
+    display: flex;
+    width: fit-content;
+    max-width: 500px;
+    margin: 15px 0;
+    align-items: center;
+    font-size: 18px;
+    border: 1px solid #ababab;
+    border-radius: 5px;
+}
+
+.forkInfo p {
+    max-width: 340px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.forkInfo p, .forkInfo div{
+    padding-right: 5px;
+    padding-left: 5px;
+    transition: 0.2s;
+}
+
+.forkInfo span {
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.forkInfo p:hover, .forkInfo div:hover {
+    cursor: pointer;
+    background: #dadada;
+}
+
+.completeButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.completeButton {
+    border-radius: 5px;
+    width: fit-content;
+    font-size: 19px;
+    text-align: center;
 }
 
 @keyframes displayModal {
