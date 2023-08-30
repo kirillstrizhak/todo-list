@@ -73,9 +73,15 @@ header {
     }
 }
 
+main {
+    //background-image: url(../img/bi3.jpeg);
+    background-size: contain;
+}
+
 .container {
     max-width: 1440px;
     margin: 0 auto;
+    background: #fff;
 }
 
 ::-webkit-scrollbar {
@@ -206,10 +212,212 @@ textarea {
             transform: translateX(0);
         }
     }
+
+    @keyframes completion {
+        from {
+            text-decoration: none;
+        }
+
+        to {
+            text-decoration: line-through;
+        }
+    }
+}
+
+.searchTaskInGroup {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    height: 5px;
+    border-radius: 5px;
+    box-shadow: inset 0px 0px 6px #ababab;
+
+    input {
+        height: 15px;
+        font-size: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    span {
+        color: $feature-color;
+        font-size: 20px;
+    }
+}
+
+.task {
+
+    .taskSave {
+        position: absolute;
+        top: 10px;
+        right: 0px;
+    }
+
+    &__header {
+        position: relative;
+
+        .taskTitle {
+            align-items: center;
+        }
+
+        .taskTitleEditor {
+            width: 100%;
+            box-sizing: border-box;
+            max-height: 220px;
+            color: #747474;
+            overflow: hidden;
+            outline: none;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 5px;
+            resize: none;
+            border: none;
+        }
+
+        .titleCounter {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 12px;
+        }
+
+        .taskTitleText {
+            position: relative;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            padding: 0 5px;
+            font-size: 22px;
+            z-index: 2;
+
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+
+        &__toolBar {
+            position: absolute;
+            justify-content: space-between;
+            align-items: center;
+            width: 102%;
+            top: 5px;
+            right: 10px;
+            display: flex;
+
+            .tools {
+                display: flex;
+                z-index: 4;
+            }
+
+            .taskTool {
+                margin: 0 2.5px;
+            }
+        }
+
+    }
+
+    &__body {
+        position: relative;
+        max-height: 165px;
+        overflow: hidden;
+
+        .taskDescrEditor {
+            width: 98.9%;
+            min-height: 60px;
+            max-height: 150px;
+            color: $placeholder-color;
+            font-size: 16px;
+            overflow-y: scroll;
+            outline: none;
+            padding: 0 5px;
+            resize: none;
+            border: none;
+        }
+
+        .descrCounter {
+            position: absolute;
+            bottom: 0;
+            left: 5px;
+            font-size: 12px;
+        }
+
+        .taskDescrText {
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            padding: 0 5px;
+            overflow: hidden;
+        }
+    }
+
+
+    &__footer {
+        position: relative;
+
+        div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .taskConfirmAdding {
+            position: absolute;
+            right: 0px;
+            padding: 5px 20px;
+            bottom: -45px;
+        }
+
+        .taskCancelAdding {
+            position: absolute;
+            padding: 5px 20px;
+            right: 110px;
+            bottom: -45px;
+        }
+    }
+}
+
+.completeTaskCircle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ababab;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    z-index: 4;
+}
+
+.completeTaskCircle:hover {
+    cursor: pointer;
+    background: #e2e2e2;
+}
+
+.completeTaskCircle::after {
+    content: '✔';
+    font-size: 19px;
+    color: #fff;
+}
+
+.taskListView {
+    position: relative;
+    padding: 5px;
+    max-height: 350px;
+    margin-top: 15px;
+    background: #fff;
+    border: 1px solid #cdcdcd;
+    border-radius: 10px;
+    // animation-name: spawningFade;
+    // animation-duration: 0.8s;
+    // animation-fill-mode: forwards;
 }
 
 .toDoList {
     padding: 0 10px;
+    height: 100vh;
 
     &__header {
         position: relative;
@@ -217,33 +425,6 @@ textarea {
         justify-content: center;
         align-items: center;
         padding: 10px 0;
-
-        .searchForm {
-            .searchTask {
-                display: flex;
-                justify-content: center;
-
-                .taskInput {
-                    width: 650px;
-                    height: 40px;
-                    font-size: 30px;
-                    padding: 10px;
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 0;
-                }
-
-                .searchTaskButton {
-                    font-size: 25px;
-                }
-
-                .cancelSearchButton {
-                    border-radius: 0;
-                    font-size: 35px;
-                    border-top-right-radius: 5px;
-                    border-bottom-right-radius: 5px;
-                }
-            }
-        }
     }
 
     &__body {
@@ -255,7 +436,7 @@ textarea {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                animation-name: swipe;
+                //animation-name: swipe;
                 animation-duration: 0.5s;
                 animation-fill-mode: backwards;
 
@@ -268,9 +449,18 @@ textarea {
                 }
 
                 .taskFilters {
+                    display: flex;
                     padding: 0 10px;
 
+                    .clearFiltersBtn {
+                        font-size: 15px;
+                        border-radius: 5px;
+                    }
+
                     .filter {
+                        display: flex;
+                        margin: 0 5px;
+                        align-items: center;
                         color: $feature-color;
                         padding: 0 10px;
                         transition: 0.2s;
@@ -278,8 +468,13 @@ textarea {
 
                     .filter:hover {
                         cursor: pointer;
-                        color: $light-grey;
                     }
+
+                    .ascendDescend {
+                        margin-left: 5px;
+                    }
+
+
                 }
             }
         }
@@ -288,7 +483,7 @@ textarea {
             padding: 10px 0;
 
             .taskList {
-                animation-name: swipe;
+                //animation-name: swipe;
                 animation-duration: 0.5s;
                 animation-fill-mode: backwards;
 
@@ -318,138 +513,6 @@ textarea {
 
             }
 
-            .task {
-
-                .taskSave {
-                    position: absolute;
-                    top: 10px;
-                    right: 15px;
-                }
-
-                &__header {
-                    position: relative;
-
-                    .taskTitle {
-                        align-items: center;
-                    }
-
-                    .taskTitleEditor {
-                        width: 100%;
-                        box-sizing: border-box;
-                        max-height: 220px;
-                        color: #747474;
-                        overflow: hidden;
-                        outline: none;
-                        font-size: 22px;
-                        font-weight: bold;
-                        padding: 0 5px;
-                        resize: none;
-                        border: none;
-                    }
-
-                    .titleCounter {
-                        position: absolute;
-                        bottom: 5px;
-                        left: 5px;
-                        font-size: 12px;
-                    }
-
-                    .taskTitleText {
-                        display: -webkit-box;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 1;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        padding: 0 5px;
-                        font-size: 22px;
-                    }
-
-                    .taskTitleText:hover {
-                        cursor: pointer;
-                        text-decoration: underline;
-                    }
-
-                    &__toolBar {
-                        position: absolute;
-                        top: 5px;
-                        right: 10px;
-                        display: flex;
-
-                        div {
-                            margin: 0 2.5px;
-                        }
-                    }
-
-                }
-
-                &__body {
-                    position: relative;
-                    max-height: 165px;
-                    overflow: hidden;
-
-                    .taskDescrEditor {
-                        width: 98.9%;
-                        min-height: 60px;
-                        max-height: 150px;
-                        color: $placeholder-color;
-                        font-size: 16px;
-                        overflow-y: scroll;
-                        outline: none;
-                        padding: 0 5px;
-                        resize: none;
-                        border: none;
-                    }
-
-                    .descrCounter {
-                        position: absolute;
-                        bottom: 0;
-                        left: 5px;
-                        font-size: 12px;
-                    }
-
-                    .taskDescrText {
-                        text-overflow: ellipsis;
-                        display: -webkit-box;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 1;
-                        padding: 0 5px;
-                        overflow: hidden;
-                    }
-                }
-
-
-                &__footer {
-                    position: relative;
-
-                    .taskConfirmAdding {
-                        position: absolute;
-                        right: 0px;
-                        padding: 5px 20px;
-                        bottom: -45px;
-                    }
-
-                    .taskCancelAdding {
-                        position: absolute;
-                        padding: 5px 20px;
-                        right: 110px;
-                        bottom: -45px;
-                    }
-                }
-            }
-
-            .taskListView {
-                position: relative;
-                padding: 5px;
-                max-height: 350px;
-                margin-top: 15px;
-                background: #fff;
-                border: 1px solid #cdcdcd;
-                border-radius: 10px;
-                // animation-name: spawningFade;
-                // animation-duration: 0.8s;
-                // animation-fill-mode: forwards;
-            }
-
             .taskBoardView {
                 position: relative;
                 padding: 15px;
@@ -461,14 +524,14 @@ textarea {
                 background: #fff;
                 border: 1px solid #cdcdcd;
                 border-radius: 10px;
-                animation-name: spawningFade;
-                animation-duration: 0.8s;
-                animation-fill-mode: forwards;
+                // animation-name: spawningFade;
+                // animation-duration: 0.8s;
+                // animation-fill-mode: forwards;
             }
 
             .taskGroups {
                 display: flex;
-                animation: swipe 0.5s backwards;
+                //animation: swipe 0.5s backwards;
                 border-bottom: 1px solid #dedede;
 
                 .groupsTitle {
@@ -485,10 +548,15 @@ textarea {
 
 
                     .groups {
-                        min-height: 800px;
-                        max-height: 800px;
+                        min-height: 615px;
+                        max-height: 615px;
                         overflow-y: scroll;
-                        padding-right: 15px;
+                        padding: 10px 15px;
+                    }
+
+                    .noGroups {
+                        font-size: 25px;
+                        text-align: center;
                     }
 
                     .addNewGroup {
@@ -519,10 +587,9 @@ textarea {
 
                 .tasksInGroup {
                     width: 60%;
-                    min-height: 500px;
                     margin-left: 15px;
-                    max-height: 800px;
-                    min-height: 800px;
+                    max-height: 615px;
+                    min-height: 615px;
 
                     .noGroupTasks {
                         text-align: center;
@@ -581,11 +648,34 @@ textarea {
                                 max-height: 400px;
                                 overflow-y: scroll;
 
-                                .groupAddingTask {
-                                    width: 300px;
+                                .groupPrompt {
+                                    top: 35px;
+                                    right: 60px;
+                                    font-size: 14px;
+                                    position: absolute;
+                                    background: #fff;
                                     padding: 5px;
+                                    border: 1px solid #dadada;
+                                    box-shadow: 4px 5px 3px #dadada;
+                                }
+
+                                .groupAddingTask {
+                                    display: flex;
+                                    position: relative;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    max-width: 600px;
+                                    padding: 5px 0;
                                     border-bottom: 1px solid #dedede;
                                     transition: 0.2s;
+
+                                    span {
+                                        color: $feature-color;
+
+                                        :hover {
+                                            cursor: pointer;
+                                        }
+                                    }
 
                                     .groupAddingTaskTitle {
                                         font-size: 20px;
@@ -605,11 +695,81 @@ textarea {
                                         -webkit-line-clamp: 1;
                                         overflow: hidden;
                                     }
-                                }
 
-                                .groupAddingTask:hover {
-                                    background: #f4f4f4;
-                                    cursor: pointer;
+                                    &__info {
+                                        width: 500px;
+                                        padding: 5px;
+                                        border-right: 1px solid #cdcdcd;
+                                        border-top-left-radius: 5px;
+                                        border-bottom-left-radius: 5px;
+                                        padding-right: 15px;
+
+                                        &:hover {
+                                            background: #f4f4f4;
+                                            cursor: pointer;
+                                        }
+                                    }
+
+                                    &__settings {
+                                        display: flex;
+                                        max-width: 140px;
+                                        padding: 0 10px;
+                                        align-items: center;
+                                        justify-content: space-between;
+
+                                        .isInGroup {
+                                            cursor: default;
+                                            top: 2px;
+                                            right: 70px;
+                                            font-size: 14px;
+                                            position: absolute;
+
+                                            .groupedAlert {
+                                                user-select: none;
+                                            }
+
+                                            &__info {
+                                                position: absolute;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox_container {
+                                            padding: 0 10px;
+
+                                            :hover {
+                                                cursor: pointer;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox {
+                                            display: none;
+
+                                            &:checked~.addTaskCheckbox__itSelf {
+                                                background: orange;
+                                                box-shadow: none
+                                            }
+
+                                            &:checked~.addTaskCheckbox__itSelf::after {
+                                                display: flex;
+                                            }
+                                        }
+
+                                        .addTaskCheckbox__itSelf {
+                                            width: 20px;
+                                            height: 20px;
+                                            border-radius: 2px;
+                                            box-shadow: inset 0px 0px 6px #ababab;
+
+                                            &::after {
+                                                content: "✔";
+                                                align-items: center;
+                                                color: #fff;
+                                                height: 21px;
+                                                font-size: 24px;
+                                                display: none;
+                                            }
+                                        }
+                                    }
                                 }
 
                                 .existTaskInGroup {
@@ -619,27 +779,31 @@ textarea {
                                     transition: 0.2s;
                                 }
                             }
-                        }
 
-                        .searchTaskInGroup {
-                            display: flex;
-                            align-items: center;
-                            padding: 15px 10px;
-                            height: 5px;
-                            border-radius: 5px;
-                            box-shadow: inset 0px 0px 6px #ababab;
+                            .tasksMenuFooter {
+                                display: flex;
+                                flex-direction: row-reverse;
+                                position: relative;
 
-                            input {
-                                height: 15px;
-                                font-size: 20px;
-                                box-shadow: none;
-                                border-radius: 0;
-                                background: transparent;
-                            }
+                                div {
+                                    background: #fff;
+                                    position: absolute;
+                                    right: -1px;
+                                    top: 0px;
+                                    border-radius: 5px;
+                                    border-top-left-radius: 0;
+                                    border-top-right-radius: 0;
+                                    border: 1px solid #dedede;
+                                    border-top: none;
+                                    box-shadow: 4px 5px 3px #dadada;
+                                }
 
-                            span {
-                                color: $feature-color;
-                                font-size: 20px;
+                                .addChoosedTasks {
+                                    padding: 5px;
+                                    font-size: 18px;
+                                    margin: 5px;
+                                    border-radius: 5px;
+                                }
                             }
                         }
 
@@ -696,6 +860,15 @@ textarea {
                 transition: 0.2s;
                 background: #fff;
 
+                &:hover .groupNameEditor {
+                    background: #f4f4f4;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    background: #f4f4f4;
+                }
+
                 .groupInfo {
                     &__header {
                         position: relative;
@@ -707,7 +880,7 @@ textarea {
                         padding: 5px;
                         border-radius: 5px;
                         position: relative;
-                        background: rgb(255, 168, 82);
+                        background: $feature-color;
                         align-items: center;
                         transition: 0.1s;
                     }
@@ -757,19 +930,10 @@ textarea {
                     overflow: hidden;
                 }
             }
+        }
 
-            .tasksGroup:hover .groupNameEditor {
-                background: #f4f4f4;
-            }
-
-            .tasksGroup:hover {
-                cursor: pointer;
-                background: #f4f4f4;
-            }
-
-            .currentGroup {
-                box-shadow: inset 5px 0px 2px rgb(255 168 82);
-            }
+        .currentGroup {
+            box-shadow: inset 5px 0px 2px $feature-color;
         }
     }
 }
